@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { user } from "../../Database/models/index.js";
 export const auth = () => {
   return async (req, res, next) => {
-    try {
       const { token } = req.headers;
       if (!token) {
         res.status(400).json({
@@ -31,11 +30,5 @@ export const auth = () => {
       }
       req.authUser = User;
       next();
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        message: "jwt is expired",
-      });
-    }
   };
 };
