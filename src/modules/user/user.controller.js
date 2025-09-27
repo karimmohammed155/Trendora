@@ -24,7 +24,6 @@ export const log_in = async (req, res, next) => {
       expiresIn: "30d",
     }
   );
-  is_user_exists.subscription_status = "active";
   await is_user_exists.save();
   res
     .status(200)
