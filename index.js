@@ -7,7 +7,7 @@ import OperationRouter from './src/modules/OperationDepartment/operationRouter.j
 import dashBoardRouter from './src/modules/dashboard/dashboardRouter.js';
 import cors from 'cors';
 dotenv.config();
-await connectDB();
+ connectDB();
 const app = express()
 const port = process.env.PORT || 3000;
 
