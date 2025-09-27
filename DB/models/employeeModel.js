@@ -7,6 +7,7 @@ const EmployeeSchema = new Schema({
   position: String,
   hireDate: Date,
   email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
   phone: String,
   status: { type: String, enum: ["active", "inactive"], default: "active" },
   role: { 

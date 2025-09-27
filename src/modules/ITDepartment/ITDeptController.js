@@ -15,10 +15,14 @@ export const getAllEmployees=asyncHandler(async(req,res,next)=>{
     }
 
     const employees=await Employee.find({department:department._id}).select("firstName lastName email position rating");
-
+    if(employees.length===0){
+        return next(new Error("No employees found in IT department",{cause:404}));
+    }
+    const totalEmployees=employees.length;
     return res.status(200).json({
         success:true,
         data:employees
+        ,totalEmployees
     });
 });
 
@@ -29,9 +33,7 @@ export const updateRating=asyncHandler(async(req,res,next)=>{
 
     const {id}=req.params;
 
-    // if (!req.user.role !== "Admin") {
-    //     return next(new Error("Only admins can update ratings", { cause: 403 }));
-    // }
+
 
     const user=await Employee.findById(id);
 
@@ -81,9 +83,7 @@ export const getRating=asyncHandler(async(req,res,next)=>{
 export const createProject=asyncHandler(async(req,res,next)=>{
     const { name, description, status, members, notes, startDate, endDate } = req.body;
 
-    // if (!req.user.role !== "Admin") {
-    //     return next(new Error("Only admins can update ratings", { cause: 403 }));
-    // }
+
 
     // Validate members exist
     const existingMembers = await Employee.find({ _id: { $in: members } });
@@ -149,9 +149,7 @@ export const getAllProjects=asyncHandler(async(req,res,next)=>{
 export const deleteProject=asyncHandler(async(req,res,next)=>{
     const {id}=req.params;
 
-    // if (!req.user.role !== "Admin") {
-    //     return next(new Error("Only admins can update ratings", { cause: 403 }));
-    // }
+
     const deletedProject=await Project.findByIdAndDelete(id);
 
     if(!deletedProject){

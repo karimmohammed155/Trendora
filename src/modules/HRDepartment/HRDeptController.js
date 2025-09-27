@@ -9,16 +9,13 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 //add new employee
 export const addNewEmployee=asyncHandler(async(req,res,next)=>{
 
-    // if(req.user.role !== "HR"||req.user.role !== "Admin"){
-    //     return next(new Error("Only the HR or the admin can add new employees",{cause:403}));
-    // }
 
     const department = await Department.findOne({ name: req.body.department });
     if (!department) {
         return next(new Error(`Department ${req.body.department} not found`, { cause: 404 }));
     }
 
-    const employee=await Employee.create({...req.body,department:department._id});
+    const employee=await Employee.create({...req.body,department:department._id,password:`${req.body.firstName}@1234`});
     return res.status(200).json({
         success:true,
         message:"Employee added successfully",
@@ -29,18 +26,12 @@ export const addNewEmployee=asyncHandler(async(req,res,next)=>{
 //update employee
 export const updateEmployee=asyncHandler(async(req,res,next)=>{
     const {id}=req.params;
-
-    // if(req.user.role !== "HR"||req.user.role !== "Admin"){
-    //     return next(new Error("Only the HR or the admin can add new employees",{cause:403}));
-    // } 
-    
+  
     const department = await Department.findOne({ name: req.body.department });
     if (!department) {
         return next(new Error(`Department ${req.body.department} not found`, { cause: 404 }));
     }  
     const employee=await Employee.findByIdAndUpdate(id,{...req.body,department:department._id},{new:true});
-
-    
 
     if(!employee){
         return next(new Error("No employee with this id",{cause:404}));
@@ -55,9 +46,6 @@ export const updateEmployee=asyncHandler(async(req,res,next)=>{
 //delete employee
 export const deleteEmployee=asyncHandler(async(req,res,next)=>{
     const {id}=req.params;
-    // if(req.user.role !== "HR"||req.user.role !== "Admin"){
-    //     return next(new Error("Only the HR or the admin can add new employees",{cause:403}));
-    // }
     const employee=await Employee.findByIdAndDelete(id);
     if(!employee){
         return next(new Error("No employee with this id",{cause:404}));
@@ -74,9 +62,11 @@ export const getAllEmployees=asyncHandler(async(req,res,next)=>{
     if(employees.length===0){
         return next(new Error("No employees found",{cause:404}));
     }           
+    const totalEmployees=employees.length;
     return res.status(200).json({
         success:true,
-        data:employees
+        data:employees,
+        totalEmployees
     });
 });
 
@@ -96,9 +86,6 @@ export const getEmployeeById=asyncHandler(async(req,res,next)=>{
 //Departments
 //add new department
 export const addNewDepartment=asyncHandler(async(req,res,next)=>{
-    // if(req.user.role !== "HR"||req.user.role !== "Admin"){
-    //     return next(new Error("Only the HR or the admin can add new employees",{cause:403}));
-    // }
     //check if department already exists
     const existingDepartment=await Department.findOne({name:req.body.name});
     if(existingDepartment){
@@ -117,9 +104,6 @@ export const updateDepartment=asyncHandler(async(req,res,next)=>{
     const {id}=req.params;
     const { name: newName } = req.body;
 
-    // if(req.user.role !== "HR"||req.user.role !== "Admin"){
-    //     return next(new Error("Only the HR or the admin can add new employees",{cause:403}));
-    // } 
        // Find the department
     const department = await Department.findById(id);
     if (!department) {
@@ -146,9 +130,6 @@ export const updateDepartment=asyncHandler(async(req,res,next)=>{
 //delete department
 export const deleteDepartment=asyncHandler(async(req,res,next)=>{
     const {id}=req.params;
-    // if(req.user.role !== "HR"||req.user.role !== "Admin"){
-    //     return next(new Error("Only the HR or the admin can add new employees",{cause:403}));
-    // }
    
     // Find the department
     const department = await Department.findById(id);
