@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as ITDeptController from './ITDeptController.js';
 import * as ITDeptSchema from './ITDeptSchema.js';
 import { validation } from "../../middlewares/validationMiddleware.js";
+import { authorization } from "../../middlewares/authorization.middleware.js";
 const router=Router();
 
 //get all users
@@ -10,14 +11,14 @@ router.get('/employees/ITDeprt',ITDeptController.getAllEmployees);
 
 //Ratings:
 //update rating
-router.put('/employees/:id/rating',validation(ITDeptSchema.updateRatingSchema),ITDeptController.updateRating)
+router.put('/employees/:id/rating',authorization('Admin'),validation(ITDeptSchema.updateRatingSchema),ITDeptController.updateRating)
 
 //get rating
 router.get('/employee/:id/rating',validation(ITDeptSchema.getRatingSchema),ITDeptController.getRating)
 
 //Projects:
 // Create new project
-router.post('/projects',validation(ITDeptSchema.createProjectSchema),ITDeptController.createProject)
+router.post('/projects',authorization('Admin'),validation(ITDeptSchema.createProjectSchema),ITDeptController.createProject)
 
 //update project
 router.put('/projects/:id',validation(ITDeptSchema.updateProjectSchema),ITDeptController.updateProject)
@@ -26,7 +27,7 @@ router.put('/projects/:id',validation(ITDeptSchema.updateProjectSchema),ITDeptCo
 router.get('/projects',ITDeptController.getAllProjects);
 
 //delete project
-router.delete('/projects/:id',validation(ITDeptSchema.deleteProjectSchema),ITDeptController.deleteProject);
+router.delete('/projects/:id',authorization('Admin'),validation(ITDeptSchema.deleteProjectSchema),ITDeptController.deleteProject);
 
 //Tickets::
 //update ticket
