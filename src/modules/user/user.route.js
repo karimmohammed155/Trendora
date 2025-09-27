@@ -6,12 +6,6 @@ import { validation } from "../../middlewares/validation_middleware.js";
 import { signup_val, signin_val, update_profile_val } from "./user.schema.js";
 
 const user_router = Router();
-
-user_router.post(
-  "/sign_up",
-  validation(signup_val),
-  error_handle(user_controller.sign_up)
-);
 user_router.post(
   "/log_in",
   validation(signin_val),

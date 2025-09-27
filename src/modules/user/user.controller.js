@@ -2,22 +2,6 @@ import { Error_handler_class } from "../../../../nettune/src/utils/index.js";
 import { user } from "../../../Database/models/index.js";
 import { compareSync, hashSync } from "bcrypt";
 import jwt from "jsonwebtoken";
-// sign up api
-export const sign_up = async (req, res, next) => {
-  const { username, email, password } = req.body;
-  const is_email_exists = await user.findOne({ email });
-  if (is_email_exists) {
-    return next(
-      new Error_handler_class("email is already exists", 400, "sign up api")
-    );
-  }
-  const hashed_password = hashSync(password, +process.env.SALT_ROUNDS);
-  const new_user = new user({ username, email, password: hashed_password });
-  await new_user.save();
-  res
-    .status(201)
-    .json({ message: "user created successfully", user_id: new_user._id });
-};
 // log in api
 export const log_in = async (req, res, next) => {
   const { email, password } = req.body;
