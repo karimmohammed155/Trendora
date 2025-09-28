@@ -5,10 +5,11 @@ const EmployeeSchema = new Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   department: { type: Schema.Types.ObjectId, ref: "Department" },
-  position: String,
   hireDate: Date,
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
+  confirmPassword: { type: String},
+  forgetCode: { type: String, length: 5 },
   phone: String,
   status: { type: String, enum: ["active", "inactive"], default: "active" },
   role: { 
@@ -27,7 +28,19 @@ rating: {
     min: 5,
     max: 500,
     default: "No notes"
-  }
+  },
+  address:{
+    type: String,
+    min: 5,
+    max: 200,
+
+  },
+  submittedDocuments: {
+    type: [String], // Array of document names or paths
+    default: []
+  },
+  pendingDocuments: { type: [String], default:[]
+  },
 
 }, { timestamps: true, versionKey: false });
 export const Employee = model("Employee", EmployeeSchema);

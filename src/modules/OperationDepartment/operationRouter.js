@@ -5,24 +5,34 @@ import { validation } from "../../middlewares/validationMiddleware.js";
 import { updateRating,getRating } from "../ITDepartment/ITDeptController.js";
 import { updateRatingSchema,getRatingSchema } from "../ITDepartment/ITDeptSchema.js";
 import { authorization } from "../../middlewares/authorization.middleware.js";
+import { addLeaveSchema, addTicketSchema } from "../dashboard/dashboardSchema.js";
+import { addLeave, addTicket } from "../dashboard/dashboardController.js";
+import { auth } from "../../middlewares/auth_middleware.js";
 const router = Router();
 
 //ratings:
 //rate employees
-router.put("/employees/:id/rate",authorization('Admin'),validation(updateRatingSchema),updateRating);
+router.put("/employees/:id/rate",auth(),authorization('Admin'),validation(updateRatingSchema),updateRating);
 //get ratings
-router.get("/employees/:id/rate",validation(getRatingSchema),getRating);
+router.get("/employees/:id/rate",auth(),validation(getRatingSchema),getRating);
 
 //get all employees
-router.get('/employees/operationDept',operationController.getAllOperationEmployees);
+router.get('/employees/operationDept',auth(),operationController.getAllOperationEmployees);
 //Campaigns:
 //add campaign
-router.post('/campaigns',authorization('Admin'),validation(operationSchema.addCampaignSchema),operationController.addCampaign);
+router.post('/campaigns',auth(),authorization('Admin'),validation(operationSchema.addCampaignSchema),operationController.addCampaign);
 //get all campaigns
-router.get('/campaigns',operationController.getAllCampaigns);
+router.get('/campaigns',auth(),operationController.getAllCampaigns);
 //update campaign
-router.put('/campaigns/:id',authorization('Admin'),validation(operationSchema.updateCampaignSchema),operationController.updateCampaign);
+router.put('/campaigns/:id',auth(),authorization('Admin'),validation(operationSchema.updateCampaignSchema),operationController.updateCampaign);
 //delete campaign
-router.delete('/campaigns/:id',authorization('Admin'),validation(operationSchema.deleteCampaignSchema),operationController.deleteCampaign);
+router.delete('/campaigns/:id',auth(),authorization('Admin'),validation(operationSchema.deleteCampaignSchema),operationController.deleteCampaign);
+
+
+////add leave
+router.post('/leaves',auth(),validation(addLeaveSchema),addLeave);
+
+//Add ticket
+router.post('/tickets',auth(),validation(addTicketSchema),addTicket);
 
 export default router;

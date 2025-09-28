@@ -12,7 +12,7 @@ export const getAllOperationEmployees=asyncHandler(async(req,res,next)=>{
     if(!department){
         return next(new Error("Operation Department not found",{cause:404}));
     }
-    const employees=await Employee.find({department:department._id}).select("firstName lastName email position rating");
+    const employees=await Employee.find({department:department._id}).select("firstName lastName email position rating note");
     if(employees.length===0){
         return next(new Error("No employees found in Operation department",{cause:404}));
     }

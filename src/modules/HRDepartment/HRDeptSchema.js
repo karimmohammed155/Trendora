@@ -12,6 +12,9 @@ export const addNewEmployee=joi.object({
     phone:joi.string().pattern(/^[0-9]{10,15}$/).required(),
     status:joi.string().valid("active", "inactive").default("active"),
     role:joi.string().valid("Admin", "Manager", "Accountant", "IT Staff", "Employee","HR").default("Employee"),
+    address:joi.string().min(5).max(200).optional(),
+    submittedDocuments: joi.array().items(joi.string()).optional(),
+    pendingDocuments: joi.array().items(joi.string()).optional(),
 }).required();
 
 //update employee

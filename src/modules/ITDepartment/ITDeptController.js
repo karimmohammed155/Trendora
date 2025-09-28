@@ -14,7 +14,7 @@ export const getAllEmployees=asyncHandler(async(req,res,next)=>{
         return next(new Error("IT Department not found",{cause:404}));
     }
 
-    const employees=await Employee.find({department:department._id}).select("firstName lastName email position rating");
+    const employees=await Employee.find({department:department._id}).select("firstName lastName email position rating note");
     if(employees.length===0){
         return next(new Error("No employees found in IT department",{cause:404}));
     }
@@ -22,7 +22,9 @@ export const getAllEmployees=asyncHandler(async(req,res,next)=>{
     return res.status(200).json({
         success:true,
         data:employees
-        ,totalEmployees
+        ,totalEmployees,
+
+
     });
 });
 
@@ -59,7 +61,7 @@ export const updateRating=asyncHandler(async(req,res,next)=>{
 export const getRating=asyncHandler(async(req,res,next)=>{
     const {id}=req.params; 
 
-    const user=await Employee.findById(id).select("name rating");
+    const user=await Employee.findById(id).select("name rating note");
 
     if(!user){
         return next(new Error("No user with this id",{cause:404}));
@@ -133,7 +135,7 @@ export const getAllProjects=asyncHandler(async(req,res,next)=>{
 
 
 
-    const projects=await Project.find().populate('members','firstName lastName email position');
+    const projects=await Project.find().populate('members','firstName lastName email position startDate endDate');
     if(projects.length===0){
         return next(new Error("No projects found",{cause:404}));
     }
