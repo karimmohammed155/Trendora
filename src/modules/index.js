@@ -1,4 +1,3 @@
-export * from "./HRDepartment/HRDeptRouter.js";
 export * from "./ITDepartment/ITDeptRouter.js";
 export * from "./OperationDepartment/operationRouter.js";
 export * from "./dashboard/dashboardRouter.js";

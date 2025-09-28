@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import {  Employee } from "../../DB/models/employeeModel.js";
 export const auth = () => {
   return async (req, res, next) => {
       const { token } = req.headers;
@@ -14,20 +15,20 @@ export const auth = () => {
       }
       const original_token = token.split(" ")[1];
       const decoded_data = jwt.verify(original_token, process.env.SIGNATURE);
-      if (!decoded_data?.Employee._id) {
+      if (!decoded_data?.user_id) {
         res.status(400).json({
           message: "invalid token payload",
         });
       }
-      const Employee = await Employee
-        .findById(decoded_data.Employee._id)
+      const employee = await Employee
+        .findById(decoded_data.user_id)
         .select("-password");
-      if (!Employee) {
+      if (!employee) {
         res.status(404).json({
           message: "Employee not found",
         });
       }
-      req.authEmployee = Employee;
+      req.authEmployee = employee;
       next();
   };
 };

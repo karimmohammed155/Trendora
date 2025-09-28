@@ -21,4 +21,4 @@ const update_profile_val = joi.object({
     ),
 });
 
-export { signup_val, signin_val, update_profile_val };
+export { signin_val, update_profile_val };

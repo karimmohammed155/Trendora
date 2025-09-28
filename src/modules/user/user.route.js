@@ -3,7 +3,7 @@ import { error_handle } from "../../middlewares/index.js";
 import * as user_controller from "../user/user.controller.js";
 import { auth } from "../../middlewares/auth_middleware.js";
 import { validation } from "../../middlewares/validation_middleware.js";
-import { signup_val, signin_val, update_profile_val } from "./user.schema.js";
+import {  signin_val, update_profile_val } from "./user.schema.js";
 
 const user_router = Router();
 user_router.post(

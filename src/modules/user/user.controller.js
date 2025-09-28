@@ -1,11 +1,11 @@
 import { Error_handler_class } from "../../../../nettune/src/utils/index.js";
-import { user } from "../../../Database/models/index.js";
+import { Employee  } from "../../../DB/models/employeeModel.js";
 import { compareSync, hashSync } from "bcrypt";
 import jwt from "jsonwebtoken";
 // log in api
 export const log_in = async (req, res, next) => {
   const { email, password } = req.body;
-  const is_user_exists = await user.findOne({ email });
+  const is_user_exists = await Employee.findOne({ email });
   if (!is_user_exists) {
     return next(
       new Error_handler_class("invalid credentials", 400, "login api")
@@ -28,7 +28,17 @@ export const log_in = async (req, res, next) => {
   await is_user_exists.save();
   res
     .status(200)
-    .json({ message: "user logged in successfully", token: token });
+    .json({ message: "user logged in successfully", token: token ,
+      user:{
+        _id: is_user_exists._id,
+      email: is_user_exists.email,
+      name: is_user_exists.name,
+      role: is_user_exists.role,
+      subscription_status: is_user_exists.subscription_status
+    
+      }
+    });
+
 };
 // get profile api
 export const list_profile = async (req, res, next) => {

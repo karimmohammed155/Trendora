@@ -8,7 +8,6 @@ export const addNewEmployee=joi.object({
     lastName:joi.string().min(3).max(50).required(),
     email:joi.string().email().required(),
     department:joi.string().valid("HR", "Accounting", "IT", "Administration","Operation").required(),
-    posistion:joi.string().min(2).max(100).required(),
     hireDate:joi.date().required(),
     phone:joi.string().pattern(/^[0-9]{10,15}$/).required(),
     status:joi.string().valid("active", "inactive").default("active"),
@@ -22,8 +21,6 @@ export const updateEmployee=joi.object({
     lastName:joi.string().min(3).max(50).optional(),
     email:joi.string().email().optional(),
     department:joi.string().valid("HR", "Accounting", "IT", "Administration","Operation").optional(),
-    posistion:joi.string().min(2).max(100).optional(),
-    // salary:joi.number().min(0).optional(),
     hireDate:joi.date().optional(),
     phone:joi.string().pattern(/^[0-9]{10,15}$/).optional(),
     status:joi.string().valid("active", "inactive").default("active"),
@@ -101,4 +98,8 @@ export const updatePayrollSchema=joi.object({
     benefits:joi.number().min(0).default(0), // allowances, insurance contributions etc.
     taxes:joi.number().min(0).default(0), // auto-calculated or entered
     status:joi.string().valid("pending", "paid").default("pending"),
+}).required();
+
+export const deletePayrollSchema=joi.object({
+    id:joi.custom(isValidObjectId).required()
 }).required();

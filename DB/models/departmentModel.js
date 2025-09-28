@@ -5,7 +5,6 @@ const DepartmentSchema = new Schema({
     type: String, 
     required: true, 
     unique: true,
-    enum: ["HR", "Accounting", "IT", "Administration","Operation"] // 👈 only allow these
   }
 }, { timestamps: true ,versionKey:false});
 

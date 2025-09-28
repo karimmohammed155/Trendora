@@ -1,3 +1,4 @@
+import { hashSync } from "bcrypt";
 import { Department } from "../../../DB/models/departmentModel.js";
 import { Employee } from "../../../DB/models/employeeModel.js";
 import { Leave } from "../../../DB/models/leavesModel.js";
@@ -15,7 +16,9 @@ export const addNewEmployee=asyncHandler(async(req,res,next)=>{
         return next(new Error(`Department ${req.body.department} not found`, { cause: 404 }));
     }
 
-    const employee=await Employee.create({...req.body,department:department._id,password:`${req.body.firstName}@1234`});
+    const passwordHashed=hashSync(`${req.body.firstName}@1234`, +process.env.SALT_ROUNDS);
+
+    const employee=await Employee.create({...req.body,department:department._id,password:passwordHashed});
     return res.status(200).json({
         success:true,
         message:"Employee added successfully",
@@ -277,6 +280,7 @@ export const getPayroll=asyncHandler(async(req,res,next)=>{
     if(payrolls.length===0){
         return next(new Error("No payrolls found",{cause:404}));
     }
+
     return res.status(200).json({
         success:true,
         data:payrolls
@@ -286,10 +290,26 @@ export const getPayroll=asyncHandler(async(req,res,next)=>{
 //update payroll
 export const updatePayroll=asyncHandler(async(req,res,next)=>{
     const {id}=req.params;
+      const {
+    baseSalary,
+    overtimeHours = 0,
+    overtimeRate = 0,
+    bonuses = 0,
+    deductions = 0,
+    benefits = 0,
+    taxes = 0,
+  } = req.body;
+      const netPay =
+    baseSalary +
+    (overtimeHours * overtimeRate) +
+    bonuses +
+    benefits -
+    (deductions + taxes);
     const updatedPayroll=await Payroll.findByIdAndUpdate(id,
-        {...req.body},
+        {...req.body,netPay},
         {new:true}
     );
+
     if(!updatedPayroll){
         return next(new Error("No payroll with this id",{cause:404}));
     }   
@@ -316,6 +336,18 @@ export const getPayslip=asyncHandler(async(req,res,next)=>{
     return res.status(200).json({
         success: true,
         data: payrolls
+    });
+});
+
+export const deletePayroll=asyncHandler(async(req,res,next)=>{
+    const {id}=req.params;
+    const deletedPayroll=await Payroll.findByIdAndDelete(id);
+    if(!deletedPayroll){
+        return next(new Error("No payroll with this id",{cause:404}));
+    }   
+    return res.status(200).json({
+        success:true,
+        message:"Payroll deleted successfully"
     });
 });
 
