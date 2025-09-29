@@ -34,3 +34,21 @@ export const addTicket=asyncHandler(async(req,res,next)=>{
         data:ticket
     });
 });
+
+//get leaves for specific employee
+export const getAllEmployeesLeaves = asyncHandler(async (req, res, next) => {
+  // assuming your auth middleware sets req.user._id
+  const employeeId = req.authEmployee._id;
+
+  const leaves = await Leave.find({ employee: employeeId })
+    .populate('employee', 'firstName lastName email');
+
+  if (!leaves || leaves.length === 0) {
+    return next(new Error("No leaves found", { cause: 404 }));
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: leaves
+  });
+});
