@@ -21,7 +21,7 @@ export const log_in = async (req, res, next) => {
     );
   }
   const token = jwt.sign(
-    { user_id: is_user_exists._id },
+    { user_id: is_user_exists._id,role:is_user_exists.role },
     process.env.SIGNATURE,
     {
       expiresIn: "30d",

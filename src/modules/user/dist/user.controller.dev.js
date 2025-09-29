@@ -61,7 +61,8 @@ var log_in = function log_in(req, res, next) {
 
         case 9:
           token = _jsonwebtoken["default"].sign({
-            user_id: is_user_exists._id
+            user_id: is_user_exists._id,
+            role: is_user_exists.role
           }, process.env.SIGNATURE, {
             expiresIn: "30d"
           });
