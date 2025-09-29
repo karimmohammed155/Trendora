@@ -9,6 +9,7 @@ const invoice_schema = new Schema(
       required: true,
     },
     client_name: String,
+    description:String,
     amount: Number,
     due_date: Date,
     status: {
