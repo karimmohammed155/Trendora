@@ -39,7 +39,10 @@ var updateEmployee = _joi["default"].object({
   hireDate: _joi["default"].date().optional(),
   phone: _joi["default"].string().pattern(/^[0-9]{10,15}$/).optional(),
   status: _joi["default"].string().valid("active", "inactive")["default"]("active"),
-  role: _joi["default"].string().valid("Admin", "Manager", "Accountant", "IT Staff", "Employee", "HR")["default"]("Employee")
+  role: _joi["default"].string().valid("Admin", "Manager", "Accountant", "IT Staff", "Employee", "HR")["default"]("Employee"),
+  address: _joi["default"].string().min(5).max(200).optional(),
+  submittedDocuments: _joi["default"].array().items(_joi["default"].string()).optional(),
+  pendingDocuments: _joi["default"].array().items(_joi["default"].string()).optional()
 }).required(); //delete employee
 
 
