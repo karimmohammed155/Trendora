@@ -25,7 +25,7 @@ rating: {
   },
   note:{
     type: String,
-    min: 5,
+    min: 2,
     max: 500,
     default: "No notes"
   },
