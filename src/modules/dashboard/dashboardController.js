@@ -40,6 +40,11 @@ export const getAllEmployeesLeaves = asyncHandler(async (req, res, next) => {
   // assuming your auth middleware sets req.user._id
   const employeeId = req.authEmployee._id;
 
+  const department=await Employee.findById(employeeId).populate('department');
+  if(!department){
+    return next(new Error("No employee with this id",{cause:404}));
+  }
+
   const leaves = await Leave.find({ employee: employeeId })
     .populate('employee', 'firstName lastName email');
 
@@ -49,6 +54,7 @@ export const getAllEmployeesLeaves = asyncHandler(async (req, res, next) => {
 
   return res.status(200).json({
     success: true,
-    data: leaves
+    data: leaves,
+    department:department.department.name
   });
 });

@@ -10,7 +10,7 @@ export const updateRatingSchema = joi.object({
     efficiency:joi.number().min(1).max(5).required(), 
     performance: joi.number().min(1).max(5).required(),
     teamwork: joi.number().min(1).max(5).required(),
-    note:joi.string().min(5).max(500).optional()
+    note:joi.string().min(2).max(500).optional()
 }).required();
 
 //get user's rating
