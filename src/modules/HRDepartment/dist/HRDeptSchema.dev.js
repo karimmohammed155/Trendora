@@ -17,7 +17,7 @@ var addNewEmployee = _joi["default"].object({
   firstName: _joi["default"].string().min(3).max(50).required(),
   lastName: _joi["default"].string().min(3).max(50).required(),
   email: _joi["default"].string().email().required(),
-  department: _joi["default"].string().required(),
+  department: _joi["default"].string().valid("HR", "Accounting", "IT", "Administration", "Operation", "Digital Marketing", "Sales").required(),
   hireDate: _joi["default"].date().required(),
   phone: _joi["default"].string().pattern(/^[0-9]{10,15}$/).required(),
   status: _joi["default"].string().valid("active", "inactive")["default"]("active"),
