@@ -109,7 +109,7 @@ var addTicket = (0, _asyncHandler.asyncHandler)(function _callee2(req, res, next
 
 exports.addTicket = addTicket;
 var getAllEmployeesLeaves = (0, _asyncHandler.asyncHandler)(function _callee3(req, res, next) {
-  var employeeId, leaves;
+  var employeeId, department, leaves;
   return regeneratorRuntime.async(function _callee3$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
@@ -117,15 +117,31 @@ var getAllEmployeesLeaves = (0, _asyncHandler.asyncHandler)(function _callee3(re
           // assuming your auth middleware sets req.user._id
           employeeId = req.authEmployee._id;
           _context3.next = 3;
+          return regeneratorRuntime.awrap(_employeeModel.Employee.findById(employeeId).populate('department'));
+
+        case 3:
+          department = _context3.sent;
+
+          if (department) {
+            _context3.next = 6;
+            break;
+          }
+
+          return _context3.abrupt("return", next(new Error("No employee with this id", {
+            cause: 404
+          })));
+
+        case 6:
+          _context3.next = 8;
           return regeneratorRuntime.awrap(_leavesModel.Leave.find({
             employee: employeeId
           }).populate('employee', 'firstName lastName email'));
 
-        case 3:
+        case 8:
           leaves = _context3.sent;
 
           if (!(!leaves || leaves.length === 0)) {
-            _context3.next = 6;
+            _context3.next = 11;
             break;
           }
 
@@ -133,13 +149,14 @@ var getAllEmployeesLeaves = (0, _asyncHandler.asyncHandler)(function _callee3(re
             cause: 404
           })));
 
-        case 6:
+        case 11:
           return _context3.abrupt("return", res.status(200).json({
             success: true,
-            data: leaves
+            data: leaves,
+            department: department.department.name
           }));
 
-        case 7:
+        case 12:
         case "end":
           return _context3.stop();
       }
