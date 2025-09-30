@@ -134,9 +134,12 @@ export const updateProject=asyncHandler(async(req,res,next)=>{
 // GET /api/it/projects → Get all projects
 export const getAllProjects=asyncHandler(async(req,res,next)=>{
 
+    const department=await Department.findOne({name:"IT"});
+    if(!department){
+        return next(new Error("IT Department not found",{cause:404}));
+    }
 
-
-    const projects=await Project.find({department:"IT"}).populate('members','firstName lastName email position startDate endDate');
+    const projects=await Project.find({department}).populate('members','firstName lastName email position startDate endDate');
     if(projects.length===0){
         return next(new Error("No projects found",{cause:404}));
     }

@@ -297,21 +297,39 @@ var updateProject = (0, _asyncHandler.asyncHandler)(function _callee5(req, res, 
 
 exports.updateProject = updateProject;
 var getAllProjects = (0, _asyncHandler.asyncHandler)(function _callee6(req, res, next) {
-  var projects;
+  var department, projects;
   return regeneratorRuntime.async(function _callee6$(_context6) {
     while (1) {
       switch (_context6.prev = _context6.next) {
         case 0:
           _context6.next = 2;
-          return regeneratorRuntime.awrap(_projectsModel.Project.find({
-            department: "IT"
-          }).populate('members', 'firstName lastName email position startDate endDate'));
+          return regeneratorRuntime.awrap(_departmentModel.Department.findOne({
+            name: "IT"
+          }));
 
         case 2:
+          department = _context6.sent;
+
+          if (department) {
+            _context6.next = 5;
+            break;
+          }
+
+          return _context6.abrupt("return", next(new Error("IT Department not found", {
+            cause: 404
+          })));
+
+        case 5:
+          _context6.next = 7;
+          return regeneratorRuntime.awrap(_projectsModel.Project.find({
+            department: department
+          }).populate('members', 'firstName lastName email position startDate endDate'));
+
+        case 7:
           projects = _context6.sent;
 
           if (!(projects.length === 0)) {
-            _context6.next = 5;
+            _context6.next = 10;
             break;
           }
 
@@ -319,13 +337,13 @@ var getAllProjects = (0, _asyncHandler.asyncHandler)(function _callee6(req, res,
             cause: 404
           })));
 
-        case 5:
+        case 10:
           return _context6.abrupt("return", res.status(200).json({
             success: true,
             data: projects
           }));
 
-        case 6:
+        case 11:
         case "end":
           return _context6.stop();
       }
