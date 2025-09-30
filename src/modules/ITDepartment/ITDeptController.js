@@ -93,8 +93,12 @@ export const createProject=asyncHandler(async(req,res,next)=>{
     if (existingMembers.length !== members.length) {
         return next(new Error("One or more members do not exist",{cause:400}));
     }
+    const department=await Department.findOne({name:"IT"});
+    if(!department){
+        return next(new Error("IT Department not found",{cause:404}));
+    }
 
-    const newProject = await Project.create({ name, description, status, members, notes, startDate, endDate,department:"IT" });
+    const newProject = await Project.create({ name, description, status, members, notes, startDate, endDate,department });
 
     return res.status(200).json({
         success:true,
