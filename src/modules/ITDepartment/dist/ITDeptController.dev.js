@@ -476,7 +476,8 @@ var getAllTickets = (0, _asyncHandler.asyncHandler)(function _callee10(req, res,
         case 5:
           return _context10.abrupt("return", res.status(200).json({
             success: true,
-            data: tickets
+            data: tickets,
+            crreatedAt: new Date()
           }));
 
         case 6:

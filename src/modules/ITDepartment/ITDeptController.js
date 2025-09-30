@@ -218,6 +218,8 @@ export const getAllTickets=asyncHandler(async(req,res,next)=>{
 
     return res.status(200).json({
         success:true,
-        data:tickets
+        data:tickets,
+        crreatedAt:new Date()
+
     });
 });
