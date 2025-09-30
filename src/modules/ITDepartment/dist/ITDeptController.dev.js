@@ -169,7 +169,7 @@ var getRating = (0, _asyncHandler.asyncHandler)(function _callee3(req, res, next
 
 exports.getRating = getRating;
 var createProject = (0, _asyncHandler.asyncHandler)(function _callee4(req, res, next) {
-  var _req$body2, name, description, status, members, notes, startDate, endDate, existingMembers, newProject;
+  var _req$body2, name, description, status, members, notes, startDate, endDate, existingMembers, department, newProject;
 
   return regeneratorRuntime.async(function _callee4$(_context4) {
     while (1) {
@@ -198,6 +198,24 @@ var createProject = (0, _asyncHandler.asyncHandler)(function _callee4(req, res, 
 
         case 6:
           _context4.next = 8;
+          return regeneratorRuntime.awrap(_departmentModel.Department.findOne({
+            name: "IT"
+          }));
+
+        case 8:
+          department = _context4.sent;
+
+          if (department) {
+            _context4.next = 11;
+            break;
+          }
+
+          return _context4.abrupt("return", next(new Error("IT Department not found", {
+            cause: 404
+          })));
+
+        case 11:
+          _context4.next = 13;
           return regeneratorRuntime.awrap(_projectsModel.Project.create({
             name: name,
             description: description,
@@ -206,10 +224,10 @@ var createProject = (0, _asyncHandler.asyncHandler)(function _callee4(req, res, 
             notes: notes,
             startDate: startDate,
             endDate: endDate,
-            department: "IT"
+            department: department
           }));
 
-        case 8:
+        case 13:
           newProject = _context4.sent;
           return _context4.abrupt("return", res.status(200).json({
             success: true,
@@ -217,7 +235,7 @@ var createProject = (0, _asyncHandler.asyncHandler)(function _callee4(req, res, 
             data: newProject
           }));
 
-        case 10:
+        case 15:
         case "end":
           return _context4.stop();
       }
