@@ -52,7 +52,8 @@ export const updateRating=asyncHandler(async(req,res,next)=>{
 
     return res.status(200).json({
         status:"success",
-        message:"Rating added successfully"
+        message:"Rating added successfully",
+        userRating:user.rating
     });
 });
 
@@ -93,7 +94,7 @@ export const createProject=asyncHandler(async(req,res,next)=>{
         return next(new Error("One or more members do not exist",{cause:400}));
     }
 
-    const newProject = await Project.create({ name, description, status, members, notes, startDate, endDate});
+    const newProject = await Project.create({ name, description, status, members, notes, startDate, endDate,department:"IT" });
 
     return res.status(200).json({
         success:true,
@@ -135,7 +136,7 @@ export const getAllProjects=asyncHandler(async(req,res,next)=>{
 
 
 
-    const projects=await Project.find().populate('members','firstName lastName email position startDate endDate');
+    const projects=await Project.find({department:"IT"}).populate('members','firstName lastName email position startDate endDate');
     if(projects.length===0){
         return next(new Error("No projects found",{cause:404}));
     }

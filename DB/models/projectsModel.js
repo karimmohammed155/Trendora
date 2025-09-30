@@ -8,6 +8,7 @@ const ProjectSchema = new Schema({
     enum: ["planned", "in_progress", "on_hold", "completed"], 
     default: "planned" 
   },
+  department: { type: Types.ObjectId, ref: "Department" },
   members: [{ type: Types.ObjectId, ref: "Employee" }], // team members
   notes: { type: String }, // general notes / remarks
   startDate: { type: Date },
