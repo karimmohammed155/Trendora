@@ -61,7 +61,11 @@ export const deleteEmployee=asyncHandler(async(req,res,next)=>{
 
 //get all employees
 export const getAllEmployees=asyncHandler(async(req,res,next)=>{
-    const employees=await Employee.find(); 
+    
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const employees=await Employee.find().skip(skip).limit(limit); 
     if(employees.length===0){
         return next(new Error("No employees found",{cause:404}));
     }           
@@ -166,8 +170,11 @@ export const getAllDepartments=asyncHandler(async(req,res,next)=>{
 
 //Leaves
 //get all leaves
-export const getAllLeaves=asyncHandler(async(req,res,next)=>{   
-    const leaves=await Leave.find().populate('employee','firstName lastName email');
+export const getAllLeaves=asyncHandler(async(req,res,next)=>{  
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit; 
+    const leaves=await Leave.find().skip(skip).limit(limit).populate('employee','firstName lastName email');
     if(leaves.length===0){
         return next(new Error("No leaves found",{cause:404}));
     }
@@ -276,7 +283,10 @@ export const generatePayslip=asyncHandler(async(req,res,next)=>{
 
 //get all payroll
 export const getPayroll=asyncHandler(async(req,res,next)=>{
-    const payrolls=await Payroll.find().populate('employee','firstName lastName email position');
+        const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const payrolls=await Payroll.find().skip(skip).limit(limit).populate('employee','firstName lastName email position');
     if(payrolls.length===0){
         return next(new Error("No payrolls found",{cause:404}));
     }
