@@ -31,6 +31,7 @@ app.use('/api/dashboard',dashBoardRouter);
 app.use("/api/accounting", accounting_router);
 app.all('/{*any}',(req,res,next)=>{
     return next(new Error("Page not found",{cause:404}));
+});
 
 
 app.use((error, req, res, next) => {
