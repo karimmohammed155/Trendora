@@ -1,14 +1,4 @@
-<<<<<<< HEAD
-import express from "express";
-import { connectDB } from "./DB/connection.js";
-import dotenv from "dotenv";
-import HRDeptRouter from "./src/modules/HRDepartment/HRDeptRouter.js";
-import ITDeptRouter from "./src/modules/ITDepartment/ITDeptRouter.js";
-import OperationRouter from "./src/modules/OperationDepartment/operationRouter.js";
-import dashBoardRouter from "./src/modules/dashboard/dashboardRouter.js";
-import { accounting_router, user_router } from "./src/modules/index.js";
-import cors from "cors";
-=======
+
 import express from 'express';
 import { connectDB } from './DB/connection.js';
 import dotenv from 'dotenv';
@@ -16,10 +6,11 @@ import HRDeptRouter from './src/modules/HRDepartment/HRDeptRouter.js';
 import ITDeptRouter from './src/modules/ITDepartment/ITDeptRouter.js';
 import OperationRouter from './src/modules/OperationDepartment/operationRouter.js';
 import dashBoardRouter from './src/modules/dashboard/dashboardRouter.js';
-import {user_router} from './src/modules/index.js';
+import { accounting_router, user_router } from "./src/modules/index.js";
 import digitalMarketingRouter from './src/modules/digitalMarketing/digitalMarketingRouter.js'
+
 import cors from 'cors';
->>>>>>> 76f0e7b (first commit)
+
 dotenv.config();
 await connectDB();
 const app = express();
@@ -30,26 +21,17 @@ app.use(express.json());
 // Enable CORS for all routes
 app.use(cors());
 
-<<<<<<< HEAD
-app.use("/api/user", user_router);
-app.use("/api/hr", HRDeptRouter);
-app.use("/api/it", ITDeptRouter);
-app.use("/api/operation", OperationRouter);
-app.use("/api/dashboard", dashBoardRouter);
-app.use("/api/accounting", accounting_router);
-app.all("/{*any}", (req, res, next) => {
-  return next(new Error("Page not found", { cause: 404 }));
-=======
+
 app.use('/api/digitalMarketing',digitalMarketingRouter);
 app.use('/api/user',user_router);
 app.use('/api/hr',HRDeptRouter);
 app.use('/api/it',ITDeptRouter);
 app.use('/api/operation',OperationRouter);
 app.use('/api/dashboard',dashBoardRouter);
+app.use("/api/accounting", accounting_router);
 app.all('/{*any}',(req,res,next)=>{
     return next(new Error("Page not found",{cause:404}));
->>>>>>> 76f0e7b (first commit)
-});
+
 
 app.use((error, req, res, next) => {
   const statusCode = error.cause || 500;
