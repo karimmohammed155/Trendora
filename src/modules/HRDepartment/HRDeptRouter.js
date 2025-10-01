@@ -64,4 +64,6 @@ router.put('/payroll/:id',auth(),authorization(['HR','Admin']),validation(HRDept
 //delete payroll
 router.delete('/payroll/:id',auth(),authorization(['HR','Admin']),validation(HRDeptSchema.deletePayrollSchema),HRDeptController.deletePayroll);
 
+router.get('/attendance',auth(),HRDeptController.getAttendance);
+
 export default router;

@@ -6,6 +6,7 @@ import { authorization } from "../../middlewares/authorization.middleware.js";
 import { auth } from "../../middlewares/auth_middleware.js";
 import { addLeaveSchema } from "../dashboard/dashboardSchema.js";
 import { addLeave } from "../dashboard/dashboardController.js";
+import { fileUpload } from "../../utils/fileUpload.js";
 const router=Router();
 
 //add leave
@@ -44,5 +45,8 @@ router.delete('/tickets/:id',auth(),validation(ITDeptSchema.deleteTicketSchema),
 
 //get all tickets
 router.get('/tickets',auth(),ITDeptController.getAllTickets);
+
+//upload sheet
+router.post('/attendance',auth(),authorization('Admin'),fileUpload().single("sheet"),ITDeptController.uploadSheet);
 
 export default router;
