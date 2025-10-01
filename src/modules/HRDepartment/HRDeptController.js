@@ -4,6 +4,7 @@ import { Employee } from "../../../DB/models/employeeModel.js";
 import { Leave } from "../../../DB/models/leavesModel.js";
 import { Payroll } from "../../../DB/models/payrollModel.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { Attendance } from "../../../DB/models/attendanceModel.js";
 
 
 //Employees
@@ -358,6 +359,18 @@ export const deletePayroll=asyncHandler(async(req,res,next)=>{
     return res.status(200).json({
         success:true,
         message:"Payroll deleted successfully"
+    });
+});
+
+export const getAttendance=asyncHandler(async(req,res,next)=>{
+    const sheets=await Attendance.find();
+
+    if(sheets.length===0){
+        return next(new Error("No attendance sheets found",{cause:404}));
+    }
+    return res.status(200).json({
+        success:true,
+        data:sheets
     });
 });
 

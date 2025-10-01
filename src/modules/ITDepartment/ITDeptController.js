@@ -1,10 +1,11 @@
+import { Attendance } from "../../../DB/models/attendanceModel.js";
 import { Department } from "../../../DB/models/departmentModel.js";
 import { Employee } from "../../../DB/models/employeeModel.js";
 import { Project } from "../../../DB/models/projectsModel.js";
 import { Ticket } from "../../../DB/models/ticketsModel.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
-
-
+import { cloudinary } from "../../utils/cloudinary.js";
+import streamifier from "streamifier";
 
 // GET /api/it/employees → Get all employees
 export const getAllEmployees=asyncHandler(async(req,res,next)=>{
@@ -235,4 +236,40 @@ export const getAllTickets=asyncHandler(async(req,res,next)=>{
         crreatedAt:new Date()
 
     });
+});
+
+
+export const uploadSheet = asyncHandler(async (req, res, next) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: "No file uploaded" });
+  }
+
+  // Convert buffer → Cloudinary upload stream
+  const uploadFromBuffer = (fileBuffer) => {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: `${process.env.CLOUD_FOLDER_NAME}/attendance`,
+          //resource_type: "raw", // 👈 important for non-images (PDF/Excel)
+        },
+        (error, result) => {
+          if (result) resolve(result);
+          else reject(error);
+        }
+      );
+      streamifier.createReadStream(fileBuffer).pipe(stream);
+    });
+  };
+
+  const { secure_url, public_id } = await uploadFromBuffer(req.file.buffer);
+
+  // Save reference in DB
+  const sheet = { id: public_id, url: secure_url };
+  await Attendance.create({ sheet });
+
+  return res.status(200).json({
+    success: true,
+    message: "Attendance sheet uploaded directly to Cloudinary successfully",
+    data: sheet,
+  });
 });
