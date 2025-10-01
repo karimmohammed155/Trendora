@@ -109,21 +109,24 @@ var addTicket = (0, _asyncHandler.asyncHandler)(function _callee2(req, res, next
 
 exports.addTicket = addTicket;
 var getAllEmployeesLeaves = (0, _asyncHandler.asyncHandler)(function _callee3(req, res, next) {
-  var employeeId, department, leaves;
+  var page, limit, skip, employeeId, department, leaves;
   return regeneratorRuntime.async(function _callee3$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
           // assuming your auth middleware sets req.user._id
+          page = parseInt(req.query.page) || 1;
+          limit = parseInt(req.query.limit) || 10;
+          skip = (page - 1) * limit;
           employeeId = req.authEmployee._id;
-          _context3.next = 3;
+          _context3.next = 6;
           return regeneratorRuntime.awrap(_employeeModel.Employee.findById(employeeId).populate('department'));
 
-        case 3:
+        case 6:
           department = _context3.sent;
 
           if (department) {
-            _context3.next = 6;
+            _context3.next = 9;
             break;
           }
 
@@ -131,17 +134,17 @@ var getAllEmployeesLeaves = (0, _asyncHandler.asyncHandler)(function _callee3(re
             cause: 404
           })));
 
-        case 6:
-          _context3.next = 8;
+        case 9:
+          _context3.next = 11;
           return regeneratorRuntime.awrap(_leavesModel.Leave.find({
             employee: employeeId
-          }).populate('employee', 'firstName lastName email'));
+          }).skip(skip).limit(limit).populate('employee', 'firstName lastName email'));
 
-        case 8:
+        case 11:
           leaves = _context3.sent;
 
           if (!(!leaves || leaves.length === 0)) {
-            _context3.next = 11;
+            _context3.next = 14;
             break;
           }
 
@@ -149,14 +152,14 @@ var getAllEmployeesLeaves = (0, _asyncHandler.asyncHandler)(function _callee3(re
             cause: 404
           })));
 
-        case 11:
+        case 14:
           return _context3.abrupt("return", res.status(200).json({
             success: true,
             data: leaves,
             department: department.department.name
           }));
 
-        case 12:
+        case 15:
         case "end":
           return _context3.stop();
       }

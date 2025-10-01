@@ -38,6 +38,10 @@ export const addTicket=asyncHandler(async(req,res,next)=>{
 //get leaves for specific employee
 export const getAllEmployeesLeaves = asyncHandler(async (req, res, next) => {
   // assuming your auth middleware sets req.user._id
+  const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
   const employeeId = req.authEmployee._id;
 
   const department=await Employee.findById(employeeId).populate('department');
@@ -45,7 +49,7 @@ export const getAllEmployeesLeaves = asyncHandler(async (req, res, next) => {
     return next(new Error("No employee with this id",{cause:404}));
   }
 
-  const leaves = await Leave.find({ employee: employeeId })
+  const leaves = await Leave.find({ employee: employeeId }).skip(skip).limit(limit)
     .populate('employee', 'firstName lastName email');
 
   if (!leaves || leaves.length === 0) {
