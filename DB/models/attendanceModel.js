@@ -5,6 +5,6 @@ const attendanceSchema = new mongoose.Schema({
       id: { type: String, required: true },
       url: { type: String, required: true },
     }
-});
+},{ timestamps: true });
 
 export const Attendance=model('Attendance', attendanceSchema);
