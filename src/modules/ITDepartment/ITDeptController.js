@@ -137,13 +137,16 @@ export const updateProject=asyncHandler(async(req,res,next)=>{
 
 // GET /api/it/projects → Get all projects
 export const getAllProjects=asyncHandler(async(req,res,next)=>{
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
     const department=await Department.findOne({name:"IT"});
     if(!department){
         return next(new Error("IT Department not found",{cause:404}));
     }
 
-    const projects=await Project.find({department}).populate('members','firstName lastName email position startDate endDate');
+    const projects=await Project.find({department}).skip(skip).limit(limit).populate('members','firstName lastName email position startDate endDate');
     if(projects.length===0){
         return next(new Error("No projects found",{cause:404}));
     }
@@ -216,8 +219,11 @@ export const deleteTicket=asyncHandler(async(req,res,next)=>{
 
 //get all tickets assigned to IT department
 export const getAllTickets=asyncHandler(async(req,res,next)=>{
+    const page= parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-    const tickets=await Ticket.find().populate('employee','firstName lastName email');
+    const tickets=await Ticket.find().skip(skip).limit(limit).populate('employee','firstName lastName email');
 
     if(tickets.length===0){
         return next(new Error("No tickets found",{cause:404}));
