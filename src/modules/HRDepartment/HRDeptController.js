@@ -363,7 +363,10 @@ export const deletePayroll=asyncHandler(async(req,res,next)=>{
 });
 
 export const getAttendance=asyncHandler(async(req,res,next)=>{
-    const sheets=await Attendance.find();
+    const page= parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const sheets=await Attendance.find().skip(skip).limit(limit);
 
     if(sheets.length===0){
         return next(new Error("No attendance sheets found",{cause:404}));
@@ -373,4 +376,5 @@ export const getAttendance=asyncHandler(async(req,res,next)=>{
         data:sheets
     });
 });
+
 

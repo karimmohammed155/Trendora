@@ -250,6 +250,7 @@ export const uploadSheet = asyncHandler(async (req, res, next) => {
       const stream = cloudinary.uploader.upload_stream(
         {
           folder: `${process.env.CLOUD_FOLDER_NAME}/attendance`,
+          use_filename: true,
           //resource_type: "raw", // 👈 important for non-images (PDF/Excel)
         },
         (error, result) => {
@@ -261,10 +262,10 @@ export const uploadSheet = asyncHandler(async (req, res, next) => {
     });
   };
 
-  const { secure_url, public_id } = await uploadFromBuffer(req.file.buffer);
+  const { secure_url, public_id  } = await uploadFromBuffer(req.file.buffer);
 
   // Save reference in DB
-  const sheet = { id: public_id, url: secure_url };
+  const sheet = { id: public_id, url: secure_url , originalName: req.file.originalname};
   await Attendance.create({ sheet });
 
   return res.status(200).json({
