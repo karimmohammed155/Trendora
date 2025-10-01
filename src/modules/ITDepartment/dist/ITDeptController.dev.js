@@ -315,21 +315,24 @@ var updateProject = (0, _asyncHandler.asyncHandler)(function _callee5(req, res, 
 
 exports.updateProject = updateProject;
 var getAllProjects = (0, _asyncHandler.asyncHandler)(function _callee6(req, res, next) {
-  var department, projects;
+  var page, limit, skip, department, projects;
   return regeneratorRuntime.async(function _callee6$(_context6) {
     while (1) {
       switch (_context6.prev = _context6.next) {
         case 0:
-          _context6.next = 2;
+          page = parseInt(req.query.page) || 1;
+          limit = parseInt(req.query.limit) || 10;
+          skip = (page - 1) * limit;
+          _context6.next = 5;
           return regeneratorRuntime.awrap(_departmentModel.Department.findOne({
             name: "IT"
           }));
 
-        case 2:
+        case 5:
           department = _context6.sent;
 
           if (department) {
-            _context6.next = 5;
+            _context6.next = 8;
             break;
           }
 
@@ -337,17 +340,17 @@ var getAllProjects = (0, _asyncHandler.asyncHandler)(function _callee6(req, res,
             cause: 404
           })));
 
-        case 5:
-          _context6.next = 7;
+        case 8:
+          _context6.next = 10;
           return regeneratorRuntime.awrap(_projectsModel.Project.find({
             department: department
-          }).populate('members', 'firstName lastName email position startDate endDate'));
+          }).skip(skip).limit(limit).populate('members', 'firstName lastName email position startDate endDate'));
 
-        case 7:
+        case 10:
           projects = _context6.sent;
 
           if (!(projects.length === 0)) {
-            _context6.next = 10;
+            _context6.next = 13;
             break;
           }
 
@@ -355,13 +358,13 @@ var getAllProjects = (0, _asyncHandler.asyncHandler)(function _callee6(req, res,
             cause: 404
           })));
 
-        case 10:
+        case 13:
           return _context6.abrupt("return", res.status(200).json({
             success: true,
             data: projects
           }));
 
-        case 11:
+        case 14:
         case "end":
           return _context6.stop();
       }
@@ -489,19 +492,22 @@ var deleteTicket = (0, _asyncHandler.asyncHandler)(function _callee9(req, res, n
 
 exports.deleteTicket = deleteTicket;
 var getAllTickets = (0, _asyncHandler.asyncHandler)(function _callee10(req, res, next) {
-  var tickets;
+  var page, limit, skip, tickets;
   return regeneratorRuntime.async(function _callee10$(_context10) {
     while (1) {
       switch (_context10.prev = _context10.next) {
         case 0:
-          _context10.next = 2;
-          return regeneratorRuntime.awrap(_ticketsModel.Ticket.find().populate('employee', 'firstName lastName email'));
+          page = parseInt(req.query.page) || 1;
+          limit = parseInt(req.query.limit) || 10;
+          skip = (page - 1) * limit;
+          _context10.next = 5;
+          return regeneratorRuntime.awrap(_ticketsModel.Ticket.find().skip(skip).limit(limit).populate('employee', 'firstName lastName email'));
 
-        case 2:
+        case 5:
           tickets = _context10.sent;
 
           if (!(tickets.length === 0)) {
-            _context10.next = 5;
+            _context10.next = 8;
             break;
           }
 
@@ -509,14 +515,14 @@ var getAllTickets = (0, _asyncHandler.asyncHandler)(function _callee10(req, res,
             cause: 404
           })));
 
-        case 5:
+        case 8:
           return _context10.abrupt("return", res.status(200).json({
             success: true,
             data: tickets,
             crreatedAt: new Date()
           }));
 
-        case 6:
+        case 9:
         case "end":
           return _context10.stop();
       }
