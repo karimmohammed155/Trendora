@@ -80,13 +80,17 @@ export const updateProject=asyncHandler(async(req,res,next)=>{
 
 // GET /api/it/projects → Get all projects
 export const getAllProjects=asyncHandler(async(req,res,next)=>{
+        const page= parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
 
     const department=await Department.findOne({name:"Digital Marketing"});
     if(!department){
         return next(new Error("Digital Marketing Department not found",{cause:404}));
     }
 
-    const projects=await Project.find({department}).populate('members','firstName lastName email position startDate endDate');
+    const projects=await Project.find({department}).skip(skip).limit(limit).populate('members','firstName lastName email position startDate endDate');
     if(projects.length===0){
         return next(new Error("No projects found",{cause:404}));
     }
