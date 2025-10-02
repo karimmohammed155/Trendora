@@ -90,7 +90,7 @@ export const getAllProjects=asyncHandler(async(req,res,next)=>{
         return next(new Error("Digital Marketing Department not found",{cause:404}));
     }
 
-    const projects=await Project.find({department}).skip(skip).limit(limit).populate('members','firstName lastName email position startDate endDate').sort({ createdAt: -1 });
+    const projects=await Project.find({department}).skip(skip).limit(limit).sort({ createdAt: -1 }).populate('members','firstName lastName email position startDate endDate');
     if(projects.length===0){
         return next(new Error("No projects found",{cause:404}));
     }

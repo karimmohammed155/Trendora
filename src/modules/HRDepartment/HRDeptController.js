@@ -176,7 +176,7 @@ export const getAllLeaves=asyncHandler(async(req,res,next)=>{
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit; 
-    const leaves=await Leave.find().skip(skip).limit(limit).populate('employee','firstName lastName email');
+    const leaves=await Leave.find().skip(skip).limit(limit).populate('employee','firstName lastName email').sort({ createdAt: -1 });
     if(leaves.length===0){
         return next(new Error("No leaves found",{cause:404}));
     }
@@ -288,7 +288,7 @@ export const getPayroll=asyncHandler(async(req,res,next)=>{
         const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const payrolls=await Payroll.find().skip(skip).limit(limit).populate('employee','firstName lastName email position');
+    const payrolls=await Payroll.find().skip(skip).limit(limit).sort({ createdAt: -1 }).populate('employee','firstName lastName email position');
     if(payrolls.length===0){
         return next(new Error("No payrolls found",{cause:404}));
     }
@@ -367,7 +367,7 @@ export const getAttendance=asyncHandler(async(req,res,next)=>{
     const page= parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const sheets=await Attendance.find().skip(skip).limit(limit);
+    const sheets=await Attendance.find().skip(skip).limit(limit).sort({ createdAt: -1 });
 
     if(sheets.length===0){
         return next(new Error("No attendance sheets found",{cause:404}));
