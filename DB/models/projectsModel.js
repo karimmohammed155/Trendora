@@ -3,6 +3,7 @@ import mongoose, { model, Schema, Types } from "mongoose";
 const ProjectSchema = new Schema({
   name: { type: String, required: true }, // Project title
   description: { type: String,required:true }, // Summary of project
+  customerName:{ type: String,trim: true  }, // Client or customer name
   status: { 
     type: String, 
     enum: ["planned", "in_progress", "on_hold", "completed"], 
