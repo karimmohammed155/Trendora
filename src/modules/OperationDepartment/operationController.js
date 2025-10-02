@@ -48,7 +48,7 @@ export const getAllCampaigns=asyncHandler(async(req,res,next)=>{
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const campaigns=await Campaign.find().skip(skip).limit(limit);
+    const campaigns=await Campaign.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
     if(campaigns.length===0){
         return next(new Error("No campaigns found",{cause:404}));
     }
