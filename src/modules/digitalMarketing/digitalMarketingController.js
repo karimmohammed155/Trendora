@@ -27,7 +27,7 @@ export const getAllDigitalMarketingEmployees=asyncHandler(async(req,res,next)=>{
 
 //  Create new project
 export const createProject=asyncHandler(async(req,res,next)=>{
-    const { name, description, status, members, notes, startDate, endDate } = req.body;
+    const { name, description,customerName, status, members, notes, startDate, endDate } = req.body;
 
 
 
@@ -41,7 +41,7 @@ export const createProject=asyncHandler(async(req,res,next)=>{
         return next(new Error("Digital Marketing Department not found",{cause:404}));
     }
 
-    const newProject = await Project.create({ name, description, status, members, notes, startDate, endDate,department });
+    const newProject = await Project.create({ name,customerName, description, status, members, notes, startDate, endDate,department });
 
     return res.status(200).json({
         success:true,
