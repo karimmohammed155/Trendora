@@ -67,7 +67,7 @@ export const getAllEmployees=asyncHandler(async(req,res,next)=>{
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const employees=await Employee.find().skip(skip).limit(limit); 
+    const employees=await Employee.find().skip(skip).limit(limit) .sort({ createdAt: -1 }); 
     if(employees.length===0){
         return next(new Error("No employees found",{cause:404}));
     }           
@@ -389,7 +389,6 @@ export const deleteSheet=asyncHandler(async(req,res,next)=>{
     }
     // Delete from Cloudinary
      if (attendance.sheet?.id) {
-        console.log("Deleting from Cloudinary:", attendance.sheet.id);
       await cloudinary.uploader.destroy(attendance.sheet.id);
     }
     await Attendance.findByIdAndDelete(id);

@@ -147,7 +147,7 @@ export const getAllProjects=asyncHandler(async(req,res,next)=>{
         return next(new Error("IT Department not found",{cause:404}));
     }
 
-    const projects=await Project.find({department}).skip(skip).limit(limit).populate('members','firstName lastName email position startDate endDate');
+    const projects=await Project.find({department}).skip(skip).limit(limit).populate('members','firstName lastName email position startDate endDate').sort({ createdAt: -1 });
     if(projects.length===0){
         return next(new Error("No projects found",{cause:404}));
     }
@@ -224,7 +224,7 @@ export const getAllTickets=asyncHandler(async(req,res,next)=>{
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const tickets=await Ticket.find().skip(skip).limit(limit).populate('employee','firstName lastName email');
+    const tickets=await Ticket.find().skip(skip).limit(limit).populate('employee','firstName lastName email').sort({ createdAt: -1 });
 
     if(tickets.length===0){
         return next(new Error("No tickets found",{cause:404}));
@@ -275,18 +275,3 @@ export const uploadSheet = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const deleteSheet=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-
-    const attendance=await Attendance.findByIdAndDelete({ id });
-    if(!attendance){
-        return next(new Error("No sheet with this id",{cause:404}));
-    }
-    // Delete from Cloudinary
-    await cloudinary.uploader.destroy(attendance.sheet.id, );
-    return res.status(200).json({
-        success:true,
-        message:"Attendance sheet deleted successfully"
-    });
-
-})
