@@ -5,6 +5,7 @@ import { Leave } from "../../../DB/models/leavesModel.js";
 import { Payroll } from "../../../DB/models/payrollModel.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { Attendance } from "../../../DB/models/attendanceModel.js";
+import { cloudinary } from "../../utils/cloudinary.js";
 
 
 //Employees
@@ -378,3 +379,24 @@ export const getAttendance=asyncHandler(async(req,res,next)=>{
 });
 
 
+export const deleteSheet=asyncHandler(async(req,res,next)=>{
+    const {id}=req.params;
+
+    const attendance=await Attendance.findOne({ _id:id });
+
+    if(!attendance){
+        return next(new Error("No sheet with this id",{cause:404}));
+    }
+    // Delete from Cloudinary
+     if (attendance.sheet?.id) {
+        console.log("Deleting from Cloudinary:", attendance.sheet.id);
+      await cloudinary.uploader.destroy(attendance.sheet.id);
+    }
+    await Attendance.findByIdAndDelete(id);
+    
+    return res.status(200).json({
+        success:true,
+        message:"Attendance sheet deleted successfully"
+    });
+
+})
