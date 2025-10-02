@@ -7,6 +7,7 @@ import { isValidObjectId } from '../../middlewares/validationMiddleware.js';
 export const addCampaignSchema=joi.object({
     name:joi.string().min(3).max(50).required(),
     description:joi.string().max(500).optional(),
+    customerName:joi.string().max(100).optional(),
     startDate:joi.date().required(),
     endDate:joi.date().greater(joi.ref('startDate')).required(),
     status:joi.string().valid("planned", "active", "paused", "completed").optional(),
