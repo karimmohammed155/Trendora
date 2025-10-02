@@ -109,3 +109,7 @@ export const updatePayrollSchema=joi.object({
 export const deletePayrollSchema=joi.object({
     id:joi.custom(isValidObjectId).required()
 }).required();
+
+export const deleteSheetSchema=joi.object({
+    id:joi.custom(isValidObjectId).required()
+}).required();

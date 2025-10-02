@@ -274,3 +274,19 @@ export const uploadSheet = asyncHandler(async (req, res, next) => {
     data: sheet,
   });
 });
+
+export const deleteSheet=asyncHandler(async(req,res,next)=>{
+    const {id}=req.params;
+
+    const attendance=await Attendance.findByIdAndDelete({ id });
+    if(!attendance){
+        return next(new Error("No sheet with this id",{cause:404}));
+    }
+    // Delete from Cloudinary
+    await cloudinary.uploader.destroy(attendance.sheet.id, );
+    return res.status(200).json({
+        success:true,
+        message:"Attendance sheet deleted successfully"
+    });
+
+})
