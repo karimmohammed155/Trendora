@@ -18,7 +18,8 @@ export const createProjectSchema=joi.object({
 //update project
 export const updateProjectSchema=joi.object({
     id:joi.custom(isValidObjectId).required(),
-    name:joi.string().min(3).max(100).optional(),   
+    name:joi.string().min(3).max(100).optional(), 
+    customerName:joi.string().max(100).optional(),
     description:joi.string().max(500).optional(),
     status:joi.string().valid("planned", "in_progress", "on_hold", "completed").default("planned"),
     members:joi.array().items(joi.custom(isValidObjectId)).min(1).optional(),
