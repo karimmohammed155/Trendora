@@ -33,19 +33,19 @@ export const log_in = async (req, res, next) => {
     .json({ message: "user logged in successfully", token: token });
 };
 // get profile api
-// export const list_profile = async (req, res, next) => {
-//   const { _id } = req.authUser;
-//   const find_user = await user.findById(_id).select("-password");
-//   if (!find_user) {
-//     next(new Error_handler_class("user not found", 404, "list profile api"));
-//   }
-//   res.status(200).json(find_user);
-// };
+export const list_profile = async (req, res, next) => {
+  const { _id } = req.authEmployee;
+  const find_user = await Employee.findById(_id).select("-password");
+  if (!find_user) {
+    next(new Error_handler_class("user not found", 404, "list profile api"));
+  }
+  res.status(200).json(find_user);
+};
 // // update profile api
 // export const update_profile = async (req, res, next) => {
-//   const { _id } = req.authUser;
+//   const { _id } = req.authEmployee;
 //   const { username, password } = req.body;
-//   const user_exists = await user.findById(_id);
+//   const user_exists = await Employee.findById(_id);
 //   if (!user_exists) {
 //     next(new Error_handler_class("user not found", 404, "list profile api"));
 //   }

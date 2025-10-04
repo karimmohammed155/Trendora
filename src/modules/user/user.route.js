@@ -19,12 +19,12 @@ user_router.get(
   auth(),
   error_handle(user_controller.list_profile)
 );
-user_router.put(
-  "/update",
-  auth(),
-  validation(update_profile_val),
-  error_handle(user_controller.update_profile)
-);
+// user_router.put(
+//   "/update",
+//   auth(),
+//   validation(update_profile_val),
+//   error_handle(user_controller.update_profile)
+// );
 
 user_router.post(
   "/forgetPassword",

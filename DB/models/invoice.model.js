@@ -11,7 +11,7 @@ const invoice_schema = new Schema(
     client_name: String,
     description:String,
     amount: Number,
-    due_date: Date,
+    due_date: String,
     status: {
       type: String,
       enum: ["paid", "unpaid", "overdue"],
