@@ -28,12 +28,12 @@ export const getAllOperationEmployees=asyncHandler(async(req,res,next)=>{
 //campaigns
 //add campaign
 export const addCampaign=asyncHandler(async(req,res,next)=>{
-    const {name,description,startDate,endDate,status,notes}=req.body;
+    const {name,description,startDate,endDate,status,notes,customerName}=req.body;
 
 
 
 
-    const newCampaign=await Campaign.create({name,description,startDate,endDate,status,notes});
+    const newCampaign=await Campaign.create({name,customerName,description,startDate,endDate,status,notes});
 
     return res.status(200).json({
         success:true,

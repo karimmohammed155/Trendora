@@ -3,6 +3,7 @@ import mongoose, { Schema, model, Types } from "mongoose";
 const CampaignSchema = new Schema({
   name: { type: String, required: true, trim: true },
   description: { type: String, trim: true },
+  customerName: { type: String, trim: true },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   status: {
