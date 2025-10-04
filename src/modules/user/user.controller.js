@@ -27,7 +27,7 @@ export const log_in = async (req, res, next) => {
       expiresIn: "30d",
     }
   );
-  await is_user_exists.save();
+
   res
     .status(200)
     .json({ message: "user logged in successfully", token: token });

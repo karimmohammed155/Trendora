@@ -31,6 +31,7 @@ export const createProject=asyncHandler(async(req,res,next)=>{
 
 
 
+    console.log('in controller', req.body);
     // Validate members exist
     const existingMembers = await Employee.find({ _id: { $in: members } });
     if (existingMembers.length !== members.length) {
@@ -40,6 +41,7 @@ export const createProject=asyncHandler(async(req,res,next)=>{
     if(!department){
         return next(new Error("Digital Marketing Department not found",{cause:404}));
     }
+   
 
     const newProject = await Project.create({ name,customerName, description, status, members, notes, startDate, endDate,department });
 
@@ -80,7 +82,7 @@ export const updateProject=asyncHandler(async(req,res,next)=>{
 
 // GET /api/it/projects → Get all projects
 export const getAllProjects=asyncHandler(async(req,res,next)=>{
-        const page= parseInt(req.query.page) || 1;
+    const page= parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
@@ -101,6 +103,56 @@ export const getAllProjects=asyncHandler(async(req,res,next)=>{
     });
 
 });
+
+// GET /api/customers
+export const getAllCustomers = asyncHandler(async (req, res, next) => {
+  const customers = await Project.distinct("customerName");
+  if (!customers.length) return next(new Error("No customers found", { cause: 404 }));
+
+  res.status(200).json({ success: true, data: customers });
+});
+
+// GET /api/customers/:id/projects
+export const getCustomerProjects = asyncHandler(async (req, res, next) => {
+  const { customerName } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const department = await Department.findOne({ name: "Digital Marketing" });
+  if (!department) {
+    return next(new Error("Digital Marketing Department not found", { cause: 404 }));
+  }
+
+  // Filter by BOTH customer and department
+  const filter = {
+    customerName: { $regex: new RegExp(`^${customerName}$`, "i") }, // case-insensitive match
+    department: department._id
+  };
+
+  const projects = await Project.find(filter)
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 })
+    .populate("members", "firstName lastName email position startDate endDate");
+
+  if (!projects.length) {
+    return next(new Error(`No projects found for customer ${customerName}`, { cause: 404 }));
+  }
+
+  const total = await Project.countDocuments(filter);
+
+  return res.status(200).json({
+    success: true,
+    data: projects,
+    pagination: {
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    },
+  });
+});
+
 
 // DELETE /api/it/projects/:id → Delete project
 export const deleteProject=asyncHandler(async(req,res,next)=>{

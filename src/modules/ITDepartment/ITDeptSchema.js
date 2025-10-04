@@ -22,7 +22,8 @@ export  const getRatingSchema = joi.object({
 //Projects:
 // Create new project
 export const createProjectSchema=joi.object({
-    name:joi.string().min(3).max(100).required(),   
+    name:joi.string().min(3).max(100).required(), 
+    customerName:joi.string().max(100).optional(),  
     description:joi.string().max(500).required(),
     status:joi.string().valid("planned", "in_progress", "on_hold", "completed").default("planned"),
     members:joi.array().items(joi.custom(isValidObjectId)).min(1).required(),
