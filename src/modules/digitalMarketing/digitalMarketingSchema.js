@@ -7,6 +7,7 @@ import { isValidObjectId } from "../../middlewares/validationMiddleware.js";
 export const createProjectSchema=joi.object({
     name:joi.string().min(3).max(100).required(),   
     description:joi.string().max(500).required(),
+    customerName:joi.string().max(100).optional(),
     status:joi.string().valid("planned", "in_progress", "on_hold", "completed").default("planned"),
     members:joi.array().items(joi.custom(isValidObjectId)).min(1).required(),
     notes:joi.string().max(1000).allow(""),

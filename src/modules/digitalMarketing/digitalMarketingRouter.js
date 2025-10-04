@@ -29,6 +29,11 @@ router.put('/projects/:id',auth(),authorization('Admin'),validation(digitalMarke
 //delete project
 router.delete('/projects/:id',auth(),authorization('Admin'),validation(digitalMarketingSchema.deleteProjectSchema),digitalMarketingController.deleteProject);
 
+//get all customers
+router.get('/customers',auth(),digitalMarketingController.getAllCustomers);
+
+//get customers projects
+router.get('/customers/:customerName/projects',auth(),digitalMarketingController.getCustomerProjects);
 
 ////add leave
 router.post('/leaves',auth(),validation(addLeaveSchema),addLeave);
