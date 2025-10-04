@@ -1,7 +1,10 @@
 import { Router } from "express";
 import * as accounting_controller from "./accounting.controller.js";
 import { auth, authorization, validation } from "../../middlewares/index.js";
-import { invoiceValidationSchema } from "./accounting.validation.js";
+import {
+  invoiceValidationSchema,
+  update_invoice_schema,
+} from "./accounting.validation.js";
 const accounting_router = Router();
 
 accounting_router.post(
@@ -11,11 +14,11 @@ accounting_router.post(
   validation(invoiceValidationSchema),
   accounting_controller.add_invoice
 );
-accounting_router.post(
+accounting_router.put(
   "/update_invoice/:_id",
   auth(),
   authorization(["Admin", "Accountant"]),
-  validation(invoiceValidationSchema),
+  validation(update_invoice_schema),
   accounting_controller.update_invoice
 );
 accounting_router.get(
