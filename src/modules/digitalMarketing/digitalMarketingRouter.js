@@ -13,33 +13,33 @@ const router=Router();
 
 //ratings:
 //rate employees
-router.put("/employees/:id/rate",auth(),validation(updateRatingSchema),updateRating);
+router.put("/employees/:id/rate",validation(updateRatingSchema),updateRating);
 //get ratings
-router.get("/employees/:id/rate",auth(),validation(getRatingSchema),getRating);
+router.get("/employees/:id/rate",validation(getRatingSchema),getRating);
 
 //get all employees
-router.get('/employees/digitalMarketing',auth(),digitalMarketingController.getAllDigitalMarketingEmployees);
+router.get('/employees/digitalMarketing',digitalMarketingController.getAllDigitalMarketingEmployees);
 //Campaigns:
 //add project
-router.post('/projects',auth(),validation(digitalMarketingSchema.createProjectSchema),digitalMarketingController.createProject);
+router.post('/projects',validation(digitalMarketingSchema.createProjectSchema),digitalMarketingController.createProject);
 //get all projects
-router.get('/projects',auth(),digitalMarketingController.getAllProjects);
+router.get('/projects',digitalMarketingController.getAllProjects);
 //update project
-router.put('/projects/:id',auth(),validation(digitalMarketingSchema.updateProjectSchema),digitalMarketingController.updateProject);
+router.put('/projects/:id',validation(digitalMarketingSchema.updateProjectSchema),digitalMarketingController.updateProject);
 //delete project
-router.delete('/projects/:id',auth(),validation(digitalMarketingSchema.deleteProjectSchema),digitalMarketingController.deleteProject);
+router.delete('/projects/:id',validation(digitalMarketingSchema.deleteProjectSchema),digitalMarketingController.deleteProject);
 
 //get all customers
-router.get('/customers',auth(),digitalMarketingController.getAllCustomers);
+router.get('/customers',digitalMarketingController.getAllCustomers);
 
 //get customers projects
-router.get('/customers/:customerName/projects',auth(),digitalMarketingController.getCustomerProjects);
+router.get('/customers/:customerName/projects',digitalMarketingController.getCustomerProjects);
 
 ////add leave
-router.post('/leaves',auth(),validation(addLeaveSchema),addLeave);
+router.post('/leaves',validation(addLeaveSchema),addLeave);
 
 //Add ticket
-router.post('/tickets',auth(),validation(addTicketSchema),addTicket);
+router.post('/tickets',validation(addTicketSchema),addTicket);
 
 
 export default router;
