@@ -13,7 +13,7 @@ const router=Router();
 
 //ratings:
 //rate employees
-router.put("/employees/:id/rate",auth(),authorization('Admin'),validation(updateRatingSchema),updateRating);
+router.put("/employees/:id/rate",auth(),validation(updateRatingSchema),updateRating);
 //get ratings
 router.get("/employees/:id/rate",auth(),validation(getRatingSchema),getRating);
 
@@ -21,13 +21,13 @@ router.get("/employees/:id/rate",auth(),validation(getRatingSchema),getRating);
 router.get('/employees/digitalMarketing',auth(),digitalMarketingController.getAllDigitalMarketingEmployees);
 //Campaigns:
 //add project
-router.post('/projects',auth(),authorization('Admin'),validation(digitalMarketingSchema.createProjectSchema),digitalMarketingController.createProject);
+router.post('/projects',auth(),validation(digitalMarketingSchema.createProjectSchema),digitalMarketingController.createProject);
 //get all projects
 router.get('/projects',auth(),digitalMarketingController.getAllProjects);
 //update project
-router.put('/projects/:id',auth(),authorization('Admin'),validation(digitalMarketingSchema.updateProjectSchema),digitalMarketingController.updateProject);
+router.put('/projects/:id',auth(),validation(digitalMarketingSchema.updateProjectSchema),digitalMarketingController.updateProject);
 //delete project
-router.delete('/projects/:id',auth(),authorization('Admin'),validation(digitalMarketingSchema.deleteProjectSchema),digitalMarketingController.deleteProject);
+router.delete('/projects/:id',auth(),validation(digitalMarketingSchema.deleteProjectSchema),digitalMarketingController.deleteProject);
 
 //get all customers
 router.get('/customers',auth(),digitalMarketingController.getAllCustomers);

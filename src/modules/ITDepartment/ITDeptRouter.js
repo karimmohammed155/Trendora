@@ -18,14 +18,14 @@ router.get('/employees/ITDeprt',auth(),ITDeptController.getAllEmployees);
 
 //Ratings:
 //update rating
-router.put('/employees/:id/rating',auth(),authorization('Admin'),validation(ITDeptSchema.updateRatingSchema),ITDeptController.updateRating)
+router.put('/employees/:id/rating',auth(),validation(ITDeptSchema.updateRatingSchema),ITDeptController.updateRating)
 
 //get rating
 router.get('/employee/:id/rating',auth(),validation(ITDeptSchema.getRatingSchema),ITDeptController.getRating)
 
 //Projects:
 // Create new project
-router.post('/projects',auth(),authorization('Admin'),validation(ITDeptSchema.createProjectSchema),ITDeptController.createProject)
+router.post('/projects',auth(),validation(ITDeptSchema.createProjectSchema),ITDeptController.createProject)
 
 //update project
 router.put('/projects/:id',auth(),validation(ITDeptSchema.updateProjectSchema),ITDeptController.updateProject)
@@ -34,7 +34,7 @@ router.put('/projects/:id',auth(),validation(ITDeptSchema.updateProjectSchema),I
 router.get('/projects',auth(),ITDeptController.getAllProjects);
 
 //delete project
-router.delete('/projects/:id',auth(),authorization('Admin'),validation(ITDeptSchema.deleteProjectSchema),ITDeptController.deleteProject);
+router.delete('/projects/:id',auth(),validation(ITDeptSchema.deleteProjectSchema),ITDeptController.deleteProject);
 
 //Tickets::
 //update ticket
@@ -47,6 +47,6 @@ router.delete('/tickets/:id',auth(),validation(ITDeptSchema.deleteTicketSchema),
 router.get('/tickets',auth(),ITDeptController.getAllTickets);
 
 //upload sheet
-router.post('/attendance',auth(),authorization('Admin'),fileUpload().single("sheet"),ITDeptController.uploadSheet);
+router.post('/attendance',auth(),fileUpload().single("sheet"),ITDeptController.uploadSheet);
 
 export default router;

@@ -9,13 +9,13 @@ const router=Router();
 
 
 //add new employee
-router.post('/employees',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.addNewEmployee),HRDeptController.addNewEmployee);
+router.post('/employees',auth(),validation(HRDeptSchema.addNewEmployee),HRDeptController.addNewEmployee);
 
 //update employee
-router.put('/employees/:id',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.updateEmployee),HRDeptController.updateEmployee);
+router.put('/employees/:id',auth(),validation(HRDeptSchema.updateEmployee),HRDeptController.updateEmployee);
 
 //delete employee
-router.delete('/employees/:id',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.deleteEmployee),HRDeptController.deleteEmployee);
+router.delete('/employees/:id',auth(),validation(HRDeptSchema.deleteEmployee),HRDeptController.deleteEmployee);
 
 //get all employees
 router.get('/employees/HRDeprt',auth(),HRDeptController.getAllEmployees);
@@ -25,13 +25,13 @@ router.get('/employees/:id',auth(),validation(HRDeptSchema.getEmployeeById),HRDe
 
 //Departments
 //add new department
-router.post('/departments',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.addNewDepartment),HRDeptController.addNewDepartment);
+router.post('/departments',auth(),validation(HRDeptSchema.addNewDepartment),HRDeptController.addNewDepartment);
 
 //update department
-router.put('/departments/:id',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.updateDepartment),HRDeptController.updateDepartment);
+router.put('/departments/:id',auth(),validation(HRDeptSchema.updateDepartment),HRDeptController.updateDepartment);
 
 //delete department
-router.delete('/departments/:id',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.deleteDepartment),HRDeptController.deleteDepartment);  
+router.delete('/departments/:id',auth(),validation(HRDeptSchema.deleteDepartment),HRDeptController.deleteDepartment);  
 
 //get all departments
 router.get('/departments',auth(),HRDeptController.getAllDepartments);
