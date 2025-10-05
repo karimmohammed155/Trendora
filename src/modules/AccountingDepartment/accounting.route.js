@@ -6,6 +6,7 @@ import {
   error_handle,
   validation,
 } from "../../middlewares/index.js";
+import { addLeave } from "../dashboard/dashboardController.js";
 import {
   invoiceValidationSchema,
   update_invoice_schema,
@@ -38,4 +39,5 @@ accounting_router.delete(
   authorization(["Admin", "Accountant"]),
   error_handle(accounting_controller.delete_invoice)
 );
+accounting_router.post("/leaves", auth(), addLeave);
 export { accounting_router };
