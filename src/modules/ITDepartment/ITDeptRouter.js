@@ -10,43 +10,43 @@ import { fileUpload } from "../../utils/fileUpload.js";
 const router=Router();
 
 //add leave
-router.post('/leaves',auth(),validation(addLeaveSchema),addLeave);
+router.post('/leaves',validation(addLeaveSchema),addLeave);
 
 //get all users
-router.get('/employees/ITDeprt',auth(),ITDeptController.getAllEmployees);
+router.get('/employees/ITDeprt',ITDeptController.getAllEmployees);
 
 
 //Ratings:
 //update rating
-router.put('/employees/:id/rating',auth(),authorization('Admin'),validation(ITDeptSchema.updateRatingSchema),ITDeptController.updateRating)
+router.put('/employees/:id/rating',validation(ITDeptSchema.updateRatingSchema),ITDeptController.updateRating)
 
 //get rating
-router.get('/employee/:id/rating',auth(),validation(ITDeptSchema.getRatingSchema),ITDeptController.getRating)
+router.get('/employee/:id/rating',validation(ITDeptSchema.getRatingSchema),ITDeptController.getRating)
 
 //Projects:
 // Create new project
-router.post('/projects',auth(),authorization('Admin'),validation(ITDeptSchema.createProjectSchema),ITDeptController.createProject)
+router.post('/projects',validation(ITDeptSchema.createProjectSchema),ITDeptController.createProject)
 
 //update project
-router.put('/projects/:id',auth(),validation(ITDeptSchema.updateProjectSchema),ITDeptController.updateProject)
+router.put('/projects/:id',validation(ITDeptSchema.updateProjectSchema),ITDeptController.updateProject)
 
 //get all projects
-router.get('/projects',auth(),ITDeptController.getAllProjects);
+router.get('/projects',ITDeptController.getAllProjects);
 
 //delete project
-router.delete('/projects/:id',auth(),authorization('Admin'),validation(ITDeptSchema.deleteProjectSchema),ITDeptController.deleteProject);
+router.delete('/projects/:id',validation(ITDeptSchema.deleteProjectSchema),ITDeptController.deleteProject);
 
 //Tickets::
 //update ticket
-router.put('/tickets/:id',auth(),validation(ITDeptSchema.updateTicketSchema),ITDeptController.updateTicketStatus);
+router.put('/tickets/:id',validation(ITDeptSchema.updateTicketSchema),ITDeptController.updateTicketStatus);
 
 //delete ticket
-router.delete('/tickets/:id',auth(),validation(ITDeptSchema.deleteTicketSchema),ITDeptController.deleteTicket);
+router.delete('/tickets/:id',validation(ITDeptSchema.deleteTicketSchema),ITDeptController.deleteTicket);
 
 //get all tickets
-router.get('/tickets',auth(),ITDeptController.getAllTickets);
+router.get('/tickets',ITDeptController.getAllTickets);
 
 //upload sheet
-router.post('/attendance',auth(),authorization('Admin'),fileUpload().single("sheet"),ITDeptController.uploadSheet);
+router.post('/attendance',fileUpload().single("sheet"),ITDeptController.uploadSheet);
 
 export default router;

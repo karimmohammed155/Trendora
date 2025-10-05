@@ -9,63 +9,63 @@ const router=Router();
 
 
 //add new employee
-router.post('/employees',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.addNewEmployee),HRDeptController.addNewEmployee);
+router.post('/employees',validation(HRDeptSchema.addNewEmployee),HRDeptController.addNewEmployee);
 
 //update employee
-router.put('/employees/:id',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.updateEmployee),HRDeptController.updateEmployee);
+router.put('/employees/:id',validation(HRDeptSchema.updateEmployee),HRDeptController.updateEmployee);
 
 //delete employee
-router.delete('/employees/:id',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.deleteEmployee),HRDeptController.deleteEmployee);
+router.delete('/employees/:id',validation(HRDeptSchema.deleteEmployee),HRDeptController.deleteEmployee);
 
 //get all employees
-router.get('/employees/HRDeprt',auth(),HRDeptController.getAllEmployees);
+router.get('/employees/HRDeprt',HRDeptController.getAllEmployees);
 
 //get specfic employee
-router.get('/employees/:id',auth(),validation(HRDeptSchema.getEmployeeById),HRDeptController.getEmployeeById);
+router.get('/employees/:id',validation(HRDeptSchema.getEmployeeById),HRDeptController.getEmployeeById);
 
 //Departments
 //add new department
-router.post('/departments',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.addNewDepartment),HRDeptController.addNewDepartment);
+router.post('/departments',validation(HRDeptSchema.addNewDepartment),HRDeptController.addNewDepartment);
 
 //update department
-router.put('/departments/:id',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.updateDepartment),HRDeptController.updateDepartment);
+router.put('/departments/:id',validation(HRDeptSchema.updateDepartment),HRDeptController.updateDepartment);
 
 //delete department
-router.delete('/departments/:id',auth(),authorization(['HR', 'Admin']),validation(HRDeptSchema.deleteDepartment),HRDeptController.deleteDepartment);  
+router.delete('/departments/:id',validation(HRDeptSchema.deleteDepartment),HRDeptController.deleteDepartment);  
 
 //get all departments
-router.get('/departments',auth(),HRDeptController.getAllDepartments);
+router.get('/departments',HRDeptController.getAllDepartments);
 
 //leaves
 //get all leaves
 
 //update leave status
-router.put('/leaves/:id',auth(),authorization(['HR','Admin']),validation(HRDeptSchema.updateLeaveSchema),HRDeptController.updateLeaveStatus);
+router.put('/leaves/:id',authorization(['HR','Admin']),validation(HRDeptSchema.updateLeaveSchema),HRDeptController.updateLeaveStatus);
 
 //delete leave
-router.delete('/leaves/:id',auth(),authorization(['HR','Admin']),validation(HRDeptSchema.deleteLeaveSchema),HRDeptController.deleteLeave);
+router.delete('/leaves/:id',authorization(['HR','Admin']),validation(HRDeptSchema.deleteLeaveSchema),HRDeptController.deleteLeave);
 
 //get all leaves
-router.get('/leaves',auth(),HRDeptController.getAllLeaves);
+router.get('/leaves',HRDeptController.getAllLeaves);
 
 //payroll::
 //get all payroll
-router.get('/payroll',auth(),HRDeptController.getPayroll);
+router.get('/payroll',HRDeptController.getPayroll);
 
 //generate payslip
-router.post('/payroll/:id',auth(),authorization(['HR','Admin']),validation(HRDeptSchema.generatePayrollSchema),HRDeptController.generatePayslip);
+router.post('/payroll/:id',authorization(['HR','Admin']),validation(HRDeptSchema.generatePayrollSchema),HRDeptController.generatePayslip);
 
 //get specific payslip
-router.get('/payroll/:id',auth(),validation(HRDeptSchema.getPayrollByIdSchema),HRDeptController.getPayslip);
+router.get('/payroll/:id',validation(HRDeptSchema.getPayrollByIdSchema),HRDeptController.getPayslip);
 
 //update payroll 
-router.put('/payroll/:id',auth(),authorization(['HR','Admin']),validation(HRDeptSchema.updatePayrollSchema),HRDeptController.updatePayroll);
+router.put('/payroll/:id',authorization(['HR','Admin']),validation(HRDeptSchema.updatePayrollSchema),HRDeptController.updatePayroll);
 
 //delete payroll
-router.delete('/payroll/:id',auth(),authorization(['HR','Admin']),validation(HRDeptSchema.deletePayrollSchema),HRDeptController.deletePayroll);
+router.delete('/payroll/:id',authorization(['HR','Admin']),validation(HRDeptSchema.deletePayrollSchema),HRDeptController.deletePayroll);
 
-router.get('/attendance',auth(),HRDeptController.getAttendance);
+router.get('/attendance',HRDeptController.getAttendance);
 
-router.delete('/attendance/:id',auth(),authorization(['HR','Admin']),validation(HRDeptSchema.deleteSheetSchema),HRDeptController.deleteSheet);
+router.delete('/attendance/:id',authorization(['HR','Admin']),validation(HRDeptSchema.deleteSheetSchema),HRDeptController.deleteSheet);
 
 export default router;
