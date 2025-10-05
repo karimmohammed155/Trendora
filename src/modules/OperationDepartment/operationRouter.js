@@ -12,27 +12,27 @@ const router = Router();
 
 //ratings:
 //rate employees
-router.put("/employees/:id/rate",auth(),validation(updateRatingSchema),updateRating);
+router.put("/employees/:id/rate",validation(updateRatingSchema),updateRating);
 //get ratings
-router.get("/employees/:id/rate",auth(),validation(getRatingSchema),getRating);
+router.get("/employees/:id/rate",validation(getRatingSchema),getRating);
 
 //get all employees
-router.get('/employees/operationDept',auth(),operationController.getAllOperationEmployees);
+router.get('/employees/operationDept',operationController.getAllOperationEmployees);
 //Campaigns:
 //add campaign
-router.post('/campaigns',auth(),validation(operationSchema.addCampaignSchema),operationController.addCampaign);
+router.post('/campaigns',validation(operationSchema.addCampaignSchema),operationController.addCampaign);
 //get all campaigns
-router.get('/campaigns',auth(),operationController.getAllCampaigns);
+router.get('/campaigns',operationController.getAllCampaigns);
 //update campaign
-router.put('/campaigns/:id',auth(),validation(operationSchema.updateCampaignSchema),operationController.updateCampaign);
+router.put('/campaigns/:id',validation(operationSchema.updateCampaignSchema),operationController.updateCampaign);
 //delete campaign
-router.delete('/campaigns/:id',auth(),validation(operationSchema.deleteCampaignSchema),operationController.deleteCampaign);
+router.delete('/campaigns/:id',validation(operationSchema.deleteCampaignSchema),operationController.deleteCampaign);
 
 
 ////add leave
-router.post('/leaves',auth(),validation(addLeaveSchema),addLeave);
+router.post('/leaves',validation(addLeaveSchema),addLeave);
 
 //Add ticket
-router.post('/tickets',auth(),validation(addTicketSchema),addTicket);
+router.post('/tickets',validation(addTicketSchema),addTicket);
 
 export default router;

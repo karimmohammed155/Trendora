@@ -1,18 +1,32 @@
+import { Department } from "../../DB/models/departmentModel.js";
+
 export const authorizeDepartment = (requiredDepartment) => {
-  return (req, res, next) => {
-    const user = req.authEmployee;
+  return async (req, res, next) => {
+    try {
+      const user = req.authEmployee;
 
-    if (!user)
-      return next(new Error("User not authenticated", { cause: 401 }));
+      if (!user)
+        return res.status(401).json({ message: "User not authenticated" });
 
-    // 🔓 Admins can access everything
-    if (user.role === "Admin") return next();
+      // 🔓 Admins can access any department
+      if (user.role === "Admin") return next();
 
-    // 🧩 Check department match
-    if (user.department !== requiredDepartment) {
-      return next(new Error("Access denied for this department", { cause: 403 }));
+      // 🧩 Check if department exists (optional — only if you need validation)
+      const department = await Department.findOne({ name: requiredDepartment });
+      if (!department)
+        return res.status(404).json({ message: "Department not found" });
+
+      // 🧩 Compare user's department with required one
+      if (user.department !== requiredDepartment) {
+        return res
+          .status(403)
+          .json({ message: "Access denied for this department" });
+      }
+
+      next();
+    } catch (error) {
+      console.error("Authorization error:", error);
+      return res.status(500).json({ message: "Server error during authorization" });
     }
-
-    next();
   };
 };

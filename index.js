@@ -11,6 +11,7 @@ import digitalMarketingRouter from "./src/modules/digitalMarketing/digitalMarket
 import cors from "cors";
 import { global_response } from "./src/middlewares/error.handle.middleware.js";
 import { authorizeDepartment } from "./src/middlewares/authorizeDepartment.js";
+import { auth } from "./src/middlewares/auth_middleware.js";
 
 dotenv.config();
 await connectDB();
@@ -22,13 +23,13 @@ app.use(express.json());
 // Enable CORS for all routes
 app.use(cors());
 
-app.use("/api/digitalMarketing",authorizeDepartment('Digital Marketing'), digitalMarketingRouter);
+app.use("/api/digitalMarketing",auth(),authorizeDepartment('Digital Marketing'), digitalMarketingRouter);
 app.use("/api/user", user_router);
-app.use("/api/hr",authorizeDepartment('HR'), HRDeptRouter);
-app.use("/api/it",authorizeDepartment('IT'), ITDeptRouter);
-app.use("/api/operation",authorizeDepartment('Operation'), OperationRouter);
+app.use("/api/hr",auth(),authorizeDepartment('HR'), HRDeptRouter);
+app.use("/api/it",auth(),authorizeDepartment('IT'), ITDeptRouter);
+app.use("/api/operation",auth(),authorizeDepartment('Operation'), OperationRouter);
 app.use("/api/dashboard", dashBoardRouter);
-app.use("/api/accounting",authorizeDepartment('Accounting'), accounting_router);
+app.use("/api/accounting",auth(),authorizeDepartment('Accounting'), accounting_router);
 app.all("/{*any}", (req, res, next) => {
   return next(new Error("Page not found", { cause: 404 }));
 });
