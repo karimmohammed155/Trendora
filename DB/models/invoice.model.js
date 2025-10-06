@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from "../global-setup.js";
 const { model, Schema } = mongoose;
 
 const invoice_schema = new Schema(

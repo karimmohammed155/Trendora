@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { authorization } from "../../middlewares/authorization.middleware.js";
 import { addLeaveSchema,addTicketSchema } from "./dashboardSchema.js";
 import { validation } from "../../middlewares/validationMiddleware.js";
 import { addLeave,addTicket, getAllEmployeesLeaves } from "./dashboardController.js";
