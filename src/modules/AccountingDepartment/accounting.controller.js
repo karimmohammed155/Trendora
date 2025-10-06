@@ -1,4 +1,5 @@
 import { invoice } from "../../../DB/models/invoice.model.js";
+import { api_features } from "../../utils/api_features.utils.js";
 import { Error_handler_class } from "../../utils/error-class.utils.js";
 
 // Add invoice api
@@ -36,8 +37,17 @@ export const update_invoice = async (req, res, next) => {
 };
 // Get all invoices api
 export const get_all_invoices = async (req, res, next) => {
-  const all_invoices = await invoice.find();
-  res.status(200).json(all_invoices);
+  const all_invoices = invoice.find();
+    const new_api_feature = new api_features(all_invoices, req.query)
+    .pagination()
+    .sort();
+  const find_invoice = await new_api_feature.mongoose_query;
+  if (!find_invoice) {
+    return next(
+      new Error_handler_class("invoices not found", 404, "invoices not found")
+    );
+  }
+  res.status(200).json(find_invoice);
 };
 // Delete api invoice
 export const delete_invoice = async (req, res, next) => {
@@ -49,4 +59,14 @@ export const delete_invoice = async (req, res, next) => {
     );
   }
   res.status(200).json({ message: "invoice deleted successfully" });
+};
+// Get invoice by id api
+export const get_invoice = async (req, res, next) => {
+  const one_invoice = await invoice.findById();
+  if (!find_invoice) {
+    return next(
+      new Error_handler_class("invoices not found", 404, "invoices not found")
+    );
+  }
+  res.status(200).json(find_invoice);
 };
