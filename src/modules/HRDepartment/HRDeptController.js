@@ -31,12 +31,17 @@ export const addNewEmployee=asyncHandler(async(req,res,next)=>{
 //update employee
 export const updateEmployee=asyncHandler(async(req,res,next)=>{
     const {id}=req.params;
-  
-    const department = await Department.findOne({ name: req.body.department });
-    if (!department) {
+    let departmentName
+    if(req.body.department){
+        departmentName = req.body.department;
+
+    departmentName=await Department.findOne({ name: departmentName });
+    if (!departmentName) {
         return next(new Error(`Department ${req.body.department} not found`, { cause: 404 }));
-    }  
-    const employee=await Employee.findByIdAndUpdate(id,{...req.body,department:department._id},{new:true});
+    }
+    }
+
+    const employee=await Employee.findByIdAndUpdate(id,{...req.body,department:departmentName},{new:true});
 
     if(!employee){
         return next(new Error("No employee with this id",{cause:404}));
@@ -67,7 +72,7 @@ export const getAllEmployees=asyncHandler(async(req,res,next)=>{
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const employees=await Employee.find().skip(skip).limit(limit) .sort({ createdAt: -1 }); 
+    const employees=await Employee.find().skip(skip).limit(limit).sort({ createdAt: -1 }); 
     if(employees.length===0){
         return next(new Error("No employees found",{cause:404}));
     }           
@@ -75,7 +80,8 @@ export const getAllEmployees=asyncHandler(async(req,res,next)=>{
     return res.status(200).json({
         success:true,
         data:employees,
-        totalEmployees
+        totalEmployees,
+        
     });
 });
 
@@ -88,7 +94,9 @@ export const getEmployeeById=asyncHandler(async(req,res,next)=>{
     }   
     return res.status(200).json({
         success:true,
-        data:employee
+        data:employee,
+        
+
     });
 });
 
@@ -176,7 +184,7 @@ export const getAllLeaves=asyncHandler(async(req,res,next)=>{
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit; 
-    const leaves=await Leave.find().skip(skip).limit(limit).populate('employee','firstName lastName email').sort({ createdAt: -1 });
+    const leaves=await Leave.find().skip(skip).limit(limit).sort({ createdAt: -1 }).populate('employee','firstName lastName email');
     if(leaves.length===0){
         return next(new Error("No leaves found",{cause:404}));
     }

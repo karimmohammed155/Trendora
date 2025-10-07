@@ -40,10 +40,10 @@ router.get('/departments',HRDeptController.getAllDepartments);
 //get all leaves
 
 //update leave status
-router.put('/leaves/:id',authorization(['HR','Admin']),validation(HRDeptSchema.updateLeaveSchema),HRDeptController.updateLeaveStatus);
+router.put('/leaves/:id',validation(HRDeptSchema.updateLeaveSchema),HRDeptController.updateLeaveStatus);
 
 //delete leave
-router.delete('/leaves/:id',authorization(['HR','Admin']),validation(HRDeptSchema.deleteLeaveSchema),HRDeptController.deleteLeave);
+router.delete('/leaves/:id',validation(HRDeptSchema.deleteLeaveSchema),HRDeptController.deleteLeave);
 
 //get all leaves
 router.get('/leaves',HRDeptController.getAllLeaves);
@@ -53,19 +53,19 @@ router.get('/leaves',HRDeptController.getAllLeaves);
 router.get('/payroll',HRDeptController.getPayroll);
 
 //generate payslip
-router.post('/payroll/:id',authorization(['HR','Admin']),validation(HRDeptSchema.generatePayrollSchema),HRDeptController.generatePayslip);
+router.post('/payroll/:id',validation(HRDeptSchema.generatePayrollSchema),HRDeptController.generatePayslip);
 
 //get specific payslip
 router.get('/payroll/:id',validation(HRDeptSchema.getPayrollByIdSchema),HRDeptController.getPayslip);
 
 //update payroll 
-router.put('/payroll/:id',authorization(['HR','Admin']),validation(HRDeptSchema.updatePayrollSchema),HRDeptController.updatePayroll);
+router.put('/payroll/:id',validation(HRDeptSchema.updatePayrollSchema),HRDeptController.updatePayroll);
 
 //delete payroll
-router.delete('/payroll/:id',authorization(['HR','Admin']),validation(HRDeptSchema.deletePayrollSchema),HRDeptController.deletePayroll);
+router.delete('/payroll/:id',validation(HRDeptSchema.deletePayrollSchema),HRDeptController.deletePayroll);
 
 router.get('/attendance',HRDeptController.getAttendance);
 
-router.delete('/attendance/:id',authorization(['HR','Admin']),validation(HRDeptSchema.deleteSheetSchema),HRDeptController.deleteSheet);
+router.delete('/attendance/:id',validation(HRDeptSchema.deleteSheetSchema),HRDeptController.deleteSheet);
 
 export default router;

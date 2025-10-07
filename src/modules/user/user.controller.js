@@ -30,7 +30,14 @@ export const log_in = async (req, res, next) => {
 
   res
     .status(200)
-    .json({ message: "user logged in successfully", token: token });
+    .json({ 
+      message: "user logged in successfully",
+      token: token,
+      user:{
+        is_user_exists
+      }
+     
+     });
 };
 // get profile api
 export const list_profile = async (req, res, next) => {
@@ -125,6 +132,7 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
   return res.json({
     success: true,
     message: "Try to login now :)",
+    
   });
 });
 

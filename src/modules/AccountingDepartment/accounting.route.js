@@ -45,11 +45,10 @@ accounting_router.delete(
 accounting_router.post(
   "/leaves",
   validation(addLeaveSchema),
-  error_handle(addLeave)
-);
+  addLeave);
 accounting_router.post(
   "/tickets",
   validation(addTicketSchema),
-  error_handle(addTicket)
+  addTicket
 );
 export { accounting_router };
