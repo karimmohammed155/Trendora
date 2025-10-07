@@ -40,11 +40,8 @@ export const updateEmployee=asyncHandler(async(req,res,next)=>{
         return next(new Error(`Department ${req.body.department} not found`, { cause: 404 }));
     }
     }
-    
-    const department = req.authEmployee.department;
- 
 
-    const employee=await Employee.findByIdAndUpdate(id,{...req.body,department:department||departmentName},{new:true});
+    const employee=await Employee.findByIdAndUpdate(id,{...req.body,department:departmentName},{new:true});
 
     if(!employee){
         return next(new Error("No employee with this id",{cause:404}));
