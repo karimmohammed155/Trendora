@@ -2,8 +2,6 @@ import {Router} from "express"
 import * as HRDeptController from './HRDeptController.js';
 import * as HRDeptSchema from './HRDeptSchema.js';
 import { validation } from "../../middlewares/validationMiddleware.js";
-import { auth } from "../../middlewares/auth_middleware.js";
-import { authorization } from "../../middlewares/authorization.middleware.js";
 const router=Router();
 
 

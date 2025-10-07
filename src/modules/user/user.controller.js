@@ -1,7 +1,7 @@
 import { asyncHandler, Error_handler_class } from "../../utils/index.js";
 import { Employee} from "../../../DB/models/employeeModel.js";
 import bcrypt from "bcrypt";
-import { compareSync, hashSync } from "bcrypt";
+import { compareSync} from "bcrypt";
 import randomstring from "randomstring";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../../utils/sendEmail.js";

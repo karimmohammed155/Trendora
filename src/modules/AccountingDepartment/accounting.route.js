@@ -1,8 +1,6 @@
 import { Router } from "express";
 import * as accounting_controller from "./accounting.controller.js";
 import {
-  auth,
-  authorization,
   error_handle,
   validation,
 } from "../../middlewares/index.js";

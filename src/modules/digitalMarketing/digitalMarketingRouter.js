@@ -2,12 +2,10 @@ import { Router } from "express";
 import { getRatingSchema, updateRatingSchema } from "../ITDepartment/ITDeptSchema.js";
 import { getRating, updateRating } from "../ITDepartment/ITDeptController.js";
 import * as digitalMarketingController from "./digitalMarketingController.js";
-import * as digitalMarketingSchema from "./digitalMarketingSchema.js";
-import { auth } from "../../middlewares/auth_middleware.js";    
+import * as digitalMarketingSchema from "./digitalMarketingSchema.js";  
 import { validation } from "../../middlewares/validationMiddleware.js";
 import { addLeaveSchema, addTicketSchema } from "../dashboard/dashboardSchema.js";
 import { addLeave, addTicket } from "../dashboard/dashboardController.js";
-import { authorization } from "../../middlewares/authorization.middleware.js";
 
 const router=Router();
 
