@@ -27,7 +27,7 @@ export const auth = () => {
         });
       }
 
-      const employee = await Employee.findById(decoded_data.user_id).select("-password");
+      const employee = await Employee.findById(decoded_data.user_id);
 
       if (!employee) {
         return res.status(404).json({
