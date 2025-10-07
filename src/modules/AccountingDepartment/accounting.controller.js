@@ -38,7 +38,7 @@ export const update_invoice = async (req, res, next) => {
 // Get all invoices api
 export const get_all_invoices = async (req, res, next) => {
   const all_invoices = invoice.find();
-    const new_api_feature = new api_features(all_invoices, req.query)
+  const new_api_feature = new api_features(all_invoices, req.query)
     .pagination()
     .sort();
   const find_invoice = await new_api_feature.mongoose_query;
@@ -62,11 +62,12 @@ export const delete_invoice = async (req, res, next) => {
 };
 // Get invoice by id api
 export const get_invoice = async (req, res, next) => {
-  const one_invoice = await invoice.findById();
-  if (!find_invoice) {
+  const { _id } = req.params;
+  const one_invoice = await invoice.findById(_id);
+  if (!one_invoice) {
     return next(
-      new Error_handler_class("invoices not found", 404, "invoices not found")
+      new Error_handler_class("invoice not found", 404, "invoice not found")
     );
   }
-  res.status(200).json(find_invoice);
+  res.status(200).json(one_invoice);
 };

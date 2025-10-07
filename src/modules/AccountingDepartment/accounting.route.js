@@ -31,8 +31,11 @@ accounting_router.put(
 );
 accounting_router.get(
   "/get_all",
-
   error_handle(accounting_controller.get_all_invoices)
+);
+accounting_router.get(
+  "/get_invoice/:_id",
+  error_handle(accounting_controller.get_invoice)
 );
 accounting_router.delete(
   "/delete_invoice/:id",
