@@ -31,12 +31,12 @@ export const addNewEmployee=asyncHandler(async(req,res,next)=>{
 //update employee
 export const updateEmployee=asyncHandler(async(req,res,next)=>{
     const {id}=req.params;
+
+    
   
-    const department = await Department.findOne({ name: req.body.department });
-    if (!department) {
-        return next(new Error(`Department ${req.body.department} not found`, { cause: 404 }));
-    }  
-    const employee=await Employee.findByIdAndUpdate(id,{...req.body,department:department._id},{new:true});
+    const department = req.authEmployee.department
+
+    const employee=await Employee.findByIdAndUpdate(id,{...req.body,department},{new:true});
 
     if(!employee){
         return next(new Error("No employee with this id",{cause:404}));
