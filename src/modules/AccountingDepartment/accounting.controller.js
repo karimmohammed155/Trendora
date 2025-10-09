@@ -1,4 +1,5 @@
 import { invoice } from "../../../DB/models/invoice.model.js";
+import { transaction } from "../../../DB/models/Transaction.model.js";
 import { api_features } from "../../utils/api_features.utils.js";
 import { Error_handler_class } from "../../utils/error-class.utils.js";
 
@@ -70,4 +71,17 @@ export const get_invoice = async (req, res, next) => {
     );
   }
   res.status(200).json(one_invoice);
+};
+// Add Transaction api
+export const add_transaction = async (req, res, next) => {
+  const { description, amount, date, type } = req.body;
+  const new_transaction = await transaction.create({
+    description,
+    amount,
+    date,
+    type,
+  });
+  res
+    .status(201)
+    .json({ message: "Transaction created successfully", new_transaction });
 };

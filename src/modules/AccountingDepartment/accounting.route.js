@@ -1,12 +1,10 @@
 import { Router } from "express";
 import * as accounting_controller from "./accounting.controller.js";
-import {
-  error_handle,
-  validation,
-} from "../../middlewares/index.js";
+import { error_handle, validation } from "../../middlewares/index.js";
 import { addLeave, addTicket } from "../dashboard/dashboardController.js";
 import {
   invoiceValidationSchema,
+  TransactionValidationSchema,
   update_invoice_schema,
 } from "./accounting.validation.js";
 import {
@@ -40,13 +38,11 @@ accounting_router.delete(
 
   error_handle(accounting_controller.delete_invoice)
 );
+accounting_router.post("/leaves", validation(addLeaveSchema), addLeave);
+accounting_router.post("/tickets", validation(addTicketSchema), addTicket);
 accounting_router.post(
-  "/leaves",
-  validation(addLeaveSchema),
-  addLeave);
-accounting_router.post(
-  "/tickets",
-  validation(addTicketSchema),
-  addTicket
+  "/add_transaction",
+  validation(TransactionValidationSchema),
+  error_handle(accounting_controller.add_transaction)
 );
 export { accounting_router };

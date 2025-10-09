@@ -12,7 +12,7 @@ export const invoiceValidationSchema = joi
   })
   .required();
 
-  export const update_invoice_schema = joi
+export const update_invoice_schema = joi
   .object({
     _id: joi.custom(isValidObjectId).required(),
     invoice_type: joi.string().valid("customer", "vendor").optional(),
@@ -21,5 +21,14 @@ export const invoiceValidationSchema = joi
     amount: joi.number().positive().optional(),
     due_date: joi.date().optional(),
     status: joi.string().valid("paid", "unpaid", "overdue").default("unpaid"),
+  })
+  .required();
+
+export const TransactionValidationSchema = joi
+  .object({
+    description: joi.string().max(1000).allow("").required(),
+    amount: joi.number().positive().required(),
+    date: joi.date().required(),
+    type: joi.string().valid("income", "expense").required(),
   })
   .required();
