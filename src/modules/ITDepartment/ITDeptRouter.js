@@ -2,8 +2,6 @@ import { Router } from "express";
 import * as ITDeptController from './ITDeptController.js';
 import * as ITDeptSchema from './ITDeptSchema.js';
 import { validation } from "../../middlewares/validationMiddleware.js";
-import { authorization } from "../../middlewares/authorization.middleware.js";
-import { auth } from "../../middlewares/auth_middleware.js";
 import { addLeaveSchema } from "../dashboard/dashboardSchema.js";
 import { addLeave } from "../dashboard/dashboardController.js";
 import { fileUpload } from "../../utils/fileUpload.js";

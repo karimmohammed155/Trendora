@@ -4,10 +4,8 @@ import * as operationSchema from "./operationSchema.js";
 import { validation } from "../../middlewares/validationMiddleware.js";
 import { updateRating,getRating } from "../ITDepartment/ITDeptController.js";
 import { updateRatingSchema,getRatingSchema } from "../ITDepartment/ITDeptSchema.js";
-import { authorization } from "../../middlewares/authorization.middleware.js";
 import { addLeaveSchema, addTicketSchema } from "../dashboard/dashboardSchema.js";
 import { addLeave, addTicket } from "../dashboard/dashboardController.js";
-import { auth } from "../../middlewares/auth_middleware.js";
 const router = Router();
 
 //ratings:
