@@ -61,3 +61,22 @@ export const getAllEmployeesLeaves = asyncHandler(async (req, res, next) => {
     department:department.department.name
   });
 });
+
+export const getAllEmployeesTickets = asyncHandler(async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+  const employeeId = req.authEmployee._id;
+
+
+  const tickets= await Ticket.find({ employee: employeeId }).skip(skip).limit(limit).sort({ createdAt: -1 })
+    .populate('employee', 'firstName lastName email');
+  if (!tickets || tickets.length === 0) {
+    return next(new Error("No tickets found", { cause: 404 }));
+  }
+  return res.status(200).json({
+    success: true,
+    data: tickets
+  });
+});
+
