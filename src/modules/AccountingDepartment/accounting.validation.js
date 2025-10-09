@@ -9,6 +9,7 @@ export const invoiceValidationSchema = joi
     amount: joi.number().positive().required(),
     due_date: joi.date().required(),
     status: joi.string().valid("paid", "unpaid", "overdue").default("unpaid"),
+    method: joi.string().valid("visa", "wallet", "cash").required(),
   })
   .required();
 
@@ -21,6 +22,7 @@ export const update_invoice_schema = joi
     amount: joi.number().positive().optional(),
     due_date: joi.date().optional(),
     status: joi.string().valid("paid", "unpaid", "overdue").default("unpaid"),
+    method: joi.string().valid("visa", "wallet", "cash").optional(),
   })
   .required();
 
@@ -30,5 +32,16 @@ export const TransactionValidationSchema = joi
     amount: joi.number().positive().required(),
     date: joi.date().required(),
     type: joi.string().valid("income", "expense").required(),
+    method: joi.string().valid("visa", "wallet", "cash").required(),
+  })
+  .required();
+export const update_transaction_schema = joi
+  .object({
+    _id: joi.custom(isValidObjectId).required(),
+    description: joi.string().max(1000).allow("").optional(),
+    amount: joi.number().positive().optional(),
+    date: joi.date().optional(),
+    type: joi.string().valid("income", "expense").optional(),
+    method: joi.string().valid("visa", "wallet", "cash").optional(),
   })
   .required();
