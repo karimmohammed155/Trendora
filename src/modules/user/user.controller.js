@@ -5,6 +5,7 @@ import { compareSync} from "bcrypt";
 import randomstring from "randomstring";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../../utils/sendEmail.js";
+import { Department } from "../../../DB/models/departmentModel.js";
 // log in api
 export const log_in = async (req, res, next) => {
   const { email, password } = req.body;
@@ -43,10 +44,17 @@ export const log_in = async (req, res, next) => {
 export const list_profile = async (req, res, next) => {
   const { _id } = req.authEmployee;
   const find_user = await Employee.findById(_id).select("-password");
+  
   if (!find_user) {
     next(new Error_handler_class("user not found", 404, "list profile api"));
   }
-  res.status(200).json(find_user);
+
+  const department=await Department.findById(find_user.department);
+  res.status(200).json({
+    success:true,
+    find_user,
+    department:department.name
+  });
 };
 // // update profile api
 // export const update_profile = async (req, res, next) => {
