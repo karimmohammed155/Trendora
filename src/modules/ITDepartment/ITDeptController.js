@@ -136,35 +136,32 @@ export const updateProject=asyncHandler(async(req,res,next)=>{
 });
 
 
-// GET /api/it/projects → Get all projects//get all projects assigned to IT department
-export const getAllProjects = asyncHandler(async(req, res, next) => {
+// GET /api/it/projects → Get all projects
+export const getAllProjects=asyncHandler(async(req,res,next)=>{
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Count total projects
-    const totalProjects = await Project.countDocuments();
+    const department=await Department.findOne({name:"IT"});
+    if(!department){
+        return next(new Error("IT Department not found",{cause:404}));
+    }
 
-    // Get paginated projects
-    const projects = await Project.find()
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 })
-        .populate('assignedTo', 'firstName lastName email'); // adjust field name as needed
-
-    if (projects.length === 0 && page === 1) {
-        return next(new Error("No projects found", {cause: 404}));
+    const projects=await Project.find({department}).skip(skip).limit(limit).sort({ createdAt: -1 }).populate('members','firstName lastName email position startDate endDate');
+    if(projects.length===0){
+        return next(new Error("No projects found",{cause:404}));
     }
 
     return res.status(200).json({
-        success: true,
-        data: projects,
-        total: totalProjects,
+        success:true,
+        data:projects,
+        total: projects.length,
         page: page,
         limit: limit,
-        totalPages: Math.ceil(totalProjects / limit),
+        totalPages: Math.ceil( projects.length / limit),
         createdAt: new Date()
     });
+
 });
 
 // DELETE /api/it/projects/:id → Delete project
