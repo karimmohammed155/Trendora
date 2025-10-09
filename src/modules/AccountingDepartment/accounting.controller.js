@@ -5,8 +5,15 @@ import { Error_handler_class } from "../../utils/error-class.utils.js";
 
 // Add invoice api
 export const add_invoice = async (req, res, next) => {
-  const { invoice_type, description, client_name, amount, due_date, status } =
-    req.body;
+  const {
+    invoice_type,
+    description,
+    client_name,
+    amount,
+    due_date,
+    status,
+    method,
+  } = req.body;
   const invoice_object = {
     invoice_type,
     description,
@@ -14,6 +21,7 @@ export const add_invoice = async (req, res, next) => {
     amount,
     due_date,
     status,
+    method,
   };
   const new_invoice = await invoice.create(invoice_object);
   res
@@ -74,14 +82,85 @@ export const get_invoice = async (req, res, next) => {
 };
 // Add Transaction api
 export const add_transaction = async (req, res, next) => {
-  const { description, amount, date, type } = req.body;
+  const { description, amount, date, type, method } = req.body;
   const new_transaction = await transaction.create({
     description,
     amount,
     date,
     type,
+    method,
   });
   res
     .status(201)
     .json({ message: "Transaction created successfully", new_transaction });
+};
+// Update Transaction api
+export const update_transaction = async (req, res, next) => {
+  const { _id } = req.params;
+  const new_trans = await transaction.findByIdAndUpdate(
+    _id,
+    { ...req.body },
+    { new: true }
+  );
+  if (!new_trans) {
+    return next(
+      new Error_handler_class(
+        "Transaction not found",
+        400,
+        "update transaction api"
+      )
+    );
+  }
+  await new_trans.save();
+  res
+    .status(200)
+    .json({ message: "Transaction updated successfully", new_trans });
+};
+// Get all transactions api
+export const get_all_transactions = async (req, res, next) => {
+  const all_transactions = transaction.find();
+  const new_api_feature = new api_features(all_transactions, req.query)
+    .pagination()
+    .sort();
+  const find_transaction = await new_api_feature.mongoose_query;
+  if (!find_transaction) {
+    return next(
+      new Error_handler_class(
+        "transactions not found",
+        404,
+        "transactions not found"
+      )
+    );
+  }
+  res.status(200).json(find_transaction);
+};
+// Delete api invoice
+export const delete_transaction = async (req, res, next) => {
+  const { id } = req.params;
+  const del_transaction = await transaction.findByIdAndDelete({ _id: id });
+  if (!del_transaction) {
+    return next(
+      new Error_handler_class(
+        "Transaction not found",
+        400,
+        "delete transaction api"
+      )
+    );
+  }
+  res.status(200).json({ message: "Transaction deleted successfully" });
+};
+// Get transaction by id api
+export const get_transaction = async (req, res, next) => {
+  const { _id } = req.params;
+  const one_transaction = await transaction.findById(_id);
+  if (!one_transaction) {
+    return next(
+      new Error_handler_class(
+        "Transaction not found",
+        404,
+        "Transaction not found"
+      )
+    );
+  }
+  res.status(200).json(one_transaction);
 };

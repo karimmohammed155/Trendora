@@ -9,7 +9,7 @@ const invoice_schema = new Schema(
       required: true,
     },
     client_name: String,
-    description:String,
+    description: String,
     amount: Number,
     due_date: String,
     status: {
@@ -17,6 +17,7 @@ const invoice_schema = new Schema(
       enum: ["paid", "unpaid", "overdue"],
       default: "unpaid",
     },
+    method: { type: String, enum: ["visa", "wallet", "cash"], required: true },
   },
   { timestamps: true, versionKey: false }
 );
