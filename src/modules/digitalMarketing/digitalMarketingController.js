@@ -99,7 +99,12 @@ export const getAllProjects=asyncHandler(async(req,res,next)=>{
 
     return res.status(200).json({
         success:true,
-        data:projects
+        data:projects,
+        total: projects.length,
+        page: page,
+        limit: limit,
+        totalPages: Math.ceil( projects.length / limit),
+        createdAt: new Date()
     });
 
 });

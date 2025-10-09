@@ -136,27 +136,35 @@ export const updateProject=asyncHandler(async(req,res,next)=>{
 });
 
 
-// GET /api/it/projects → Get all projects
-export const getAllProjects=asyncHandler(async(req,res,next)=>{
+// GET /api/it/projects → Get all projects//get all projects assigned to IT department
+export const getAllProjects = asyncHandler(async(req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const department=await Department.findOne({name:"IT"});
-    if(!department){
-        return next(new Error("IT Department not found",{cause:404}));
-    }
+    // Count total projects
+    const totalProjects = await Project.countDocuments();
 
-    const projects=await Project.find({department}).skip(skip).limit(limit).populate('members','firstName lastName email position startDate endDate').sort({ createdAt: -1 });
-    if(projects.length===0){
-        return next(new Error("No projects found",{cause:404}));
+    // Get paginated projects
+    const projects = await Project.find()
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .populate('assignedTo', 'firstName lastName email'); // adjust field name as needed
+
+    if (projects.length === 0 && page === 1) {
+        return next(new Error("No projects found", {cause: 404}));
     }
 
     return res.status(200).json({
-        success:true,
-        data:projects
+        success: true,
+        data: projects,
+        total: totalProjects,
+        page: page,
+        limit: limit,
+        totalPages: Math.ceil(totalProjects / limit),
+        createdAt: new Date()
     });
-
 });
 
 // DELETE /api/it/projects/:id → Delete project
@@ -218,23 +226,35 @@ export const deleteTicket=asyncHandler(async(req,res,next)=>{
     })
 });
 
+
 //get all tickets assigned to IT department
-export const getAllTickets=asyncHandler(async(req,res,next)=>{
-    const page= parseInt(req.query.page) || 1;
+export const getAllTickets = asyncHandler(async(req, res, next) => {
+    const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const tickets=await Ticket.find().skip(skip).limit(limit).populate('employee','firstName lastName email').sort({ createdAt: -1 });
+    // Count total tickets
+    const totalTickets = await Ticket.countDocuments();
 
-    if(tickets.length===0){
-        return next(new Error("No tickets found",{cause:404}));
+    // Get paginated tickets
+    const tickets = await Ticket.find()
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .populate('employee', 'firstName lastName email');
+
+    if (tickets.length === 0 && page === 1) {
+        return next(new Error("No tickets found", {cause: 404}));
     }
 
     return res.status(200).json({
-        success:true,
-        data:tickets,
-        crreatedAt:new Date()
-
+        success: true,
+        data: tickets,
+        total: totalTickets,
+        page: page,
+        limit: limit,
+        totalPages: Math.ceil(totalTickets / limit),
+        createdAt: new Date()
     });
 });
 
