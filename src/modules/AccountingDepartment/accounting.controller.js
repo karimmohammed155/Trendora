@@ -164,3 +164,21 @@ export const get_transaction = async (req, res, next) => {
   }
   res.status(200).json(one_transaction);
 };
+export const get_summary = async (req, res, next) => {
+  const income = await transaction.aggregate([
+    { $match: { type: "income" } },
+    { $group: { _id: null, total: { $sum: "$amount" } } },
+  ]);
+  const expense = await transaction.aggregate([
+    { $match: { type: "expense" } },
+    { $group: { _id: null, total: { $sum: "$amount" } } },
+  ]);
+  const total_revenue = income[0]?.total || 0;
+  const total_expenses = expense[0]?.total || 0;
+  const net_profit = total_revenue - total_expenses;
+  res.status(200).json({
+    total_revenue,
+    total_expenses,
+    net_profit,
+  });
+};

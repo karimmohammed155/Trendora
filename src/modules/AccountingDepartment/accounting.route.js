@@ -60,4 +60,8 @@ accounting_router.get(
   "/get_transaction/:_id",
   error_handle(accounting_controller.get_transaction)
 );
+accounting_router.get(
+  "/summary",
+  error_handle(accounting_controller.get_summary)
+);
 export { accounting_router };
