@@ -48,15 +48,22 @@ export const update_invoice = async (req, res, next) => {
 export const get_all_invoices = async (req, res, next) => {
   const all_invoices = invoice.find();
   const new_api_feature = new api_features(all_invoices, req.query)
+    .filterByStatus()
     .pagination()
     .sort();
+
+  
   const find_invoice = await new_api_feature.mongoose_query;
+  let totalInvoices;
+  if (req.query.status && req.query.status !== "all") {
+     totalInvoices = await invoice.countDocuments({  status: req.query.status }); } 
+     else { totalInvoices = await invoice.countDocuments(); }
   if (!find_invoice) {
     return next(
       new Error_handler_class("invoices not found", 404, "invoices not found")
     );
   }
-  res.status(200).json(find_invoice);
+  res.status(200).json({find_invoice,totalInvoices  });
 };
 // Delete api invoice
 export const delete_invoice = async (req, res, next) => {

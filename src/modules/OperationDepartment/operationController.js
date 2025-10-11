@@ -43,52 +43,42 @@ export const addCampaign=asyncHandler(async(req,res,next)=>{
     })  
 });
 
-//get all campaigns
-export const getAllCampaigns=asyncHandler(async(req,res,next)=>{
+//get all campaignsexport const getAllCampaigns = asyncHandler(async (req, res, next) => {
+  export const getAllCampaigns = asyncHandler(async (req, res, next) => {
+  // Pass the Mongoose query itself, not awaited result
+  const query = Campaign.find();
 
-
-    const query=await Campaign.find();
-    const features = new api_features(query, req.query)
+  const features = new api_features(query, req.query)
     .filterByStatus()
     .sort()
     .pagination();
 
-    
   const campaigns = await features.mongoose_query;
 
   // ✅ Conditional total count based on status
-  let totalProjects;
+  let totalCampaigns;
   if (req.query.status && req.query.status !== "all") {
-    totalProjects = await Campaign.countDocuments({
-
-      status: req.query.status
-    });
+    totalCampaigns = await Campaign.countDocuments({ status: req.query.status });
   } else {
-    totalProjects = await Campaign.countDocuments({ department: department._id });
+    totalCampaigns = await Campaign.countDocuments();
   }
 
   if (campaigns.length === 0) {
-    return next(new Error("No projects found", { cause: 404 }));
+    return next(new Error("No campaigns found", { cause: 404 }));
   }
 
   // ✅ Send response
   return res.status(200).json({
     success: true,
     data: campaigns,
-    total: totalProjects,
+    total: totalCampaigns,
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 10,
-    totalPages: Math.ceil(totalProjects / (parseInt(req.query.limit) || 10)),
+    totalPages: Math.ceil(totalCampaigns / (parseInt(req.query.limit) || 10)),
     createdAt: new Date()
   });
-    if(campaigns.length===0){
-        return next(new Error("No campaigns found",{cause:404}));
-    }
-    return res.status(200).json({
-        success:true,
-        data:campaigns
-    });
 });
+
 
 
 //update campaign
