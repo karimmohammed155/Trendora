@@ -68,7 +68,8 @@ export const deleteEmployee=asyncHandler(async(req,res,next)=>{
 });
 // Get all employees
 export const getAllEmployees = asyncHandler(async (req, res, next) => {
-  const query = Employee.find().populate("department");
+  const query = Employee.find().populate("department","name");
+
   const features = new api_features(query, req.query)
     .filterByStatus()
     .sort()
