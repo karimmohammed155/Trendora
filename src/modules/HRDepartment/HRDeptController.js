@@ -72,8 +72,12 @@ export const getAllEmployees=asyncHandler(async(req,res,next)=>{
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const {status}=req.query;
-    const employees=await Employee.find(status).skip(skip).limit(limit).sort({ createdAt: -1 }); 
+    
+    const employees=await Employee.find(); 
+    const new_api_feature = new api_features(employees, req.query)
+        .pagination()
+        .sort()
+        .filterByStatus();
     if(employees.length===0){
         return next(new Error("No employees found",{cause:404}));
     }           
@@ -185,8 +189,11 @@ export const getAllLeaves=asyncHandler(async(req,res,next)=>{
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit; 
-    const {status}=req.query;
-    const leaves=await Leave.find(status).skip(skip).limit(limit).sort({ createdAt: -1 }).populate('employee','firstName lastName email');
+    const leaves=await Leave.find().populate('employee','firstName lastName email');
+       const new_api_feature = new api_features(leaves, req.query)
+        .pagination()
+        .sort()
+        .filterByStatus();
     if(leaves.length===0){
         return next(new Error("No leaves found",{cause:404}));
     }
@@ -298,8 +305,11 @@ export const getPayroll=asyncHandler(async(req,res,next)=>{
         const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const {status}=req.query;
-    const payrolls=await Payroll.find(status).skip(skip).limit(limit).sort({ createdAt: -1 }).populate('employee','firstName lastName email position');
+    const payrolls=await Payroll.find().populate('employee','firstName lastName email position');
+       const new_api_feature = new api_features(payrolls, req.query)
+        .pagination()
+        .sort()
+        .filterByStatus();
     if(payrolls.length===0){
         return next(new Error("No payrolls found",{cause:404}));
     }

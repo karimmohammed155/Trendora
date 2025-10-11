@@ -33,5 +33,12 @@ export class api_features {
     return this;
   }
 
+  filterByStatus() {
+    const {status}=this.query;
+    if(status){
+      this.mongoose_query = this.mongoose_query.find({ status });
+    }
+    return this;
+  }
 
 }
