@@ -278,7 +278,7 @@ export const getAllTickets = asyncHandler(async(req, res, next) => {
         total: totalTickets,
           page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 10,
-    totalPages: Math.ceil(totalProjects / (parseInt(req.query.limit) || 10)),
+    totalPages: Math.ceil(totalTickets / (parseInt(req.query.limit) || 10)),
     createdAt: new Date()
     });
 });
