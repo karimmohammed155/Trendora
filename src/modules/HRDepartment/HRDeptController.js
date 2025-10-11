@@ -193,14 +193,15 @@ export const getAllLeaves = asyncHandler(async (req, res, next) => {
     .pagination();
 
   const leaves = await features.mongoose_query;
-
+const totalLeaves = await Leave.countDocuments();
   if (leaves.length === 0) {
     return next(new Error("No leaves found", { cause: 404 }));
   }
 
   return res.status(200).json({
     success: true,
-    data: leaves
+    data: leaves,
+    totalLeaves
   });
 });
 
@@ -311,14 +312,15 @@ export const getPayroll = asyncHandler(async (req, res, next) => {
     .pagination();
 
   const payrolls = await features.mongoose_query;
-
+const totalPayrolls = await Payroll.countDocuments();
   if (payrolls.length === 0) {
     return next(new Error("No payrolls found", { cause: 404 }));
   }
 
   return res.status(200).json({
     success: true,
-    data: payrolls
+    data: payrolls,
+    totalPayrolls
   });
 });
 
