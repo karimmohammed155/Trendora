@@ -7,7 +7,8 @@ export const addNewEmployee=joi.object({
     firstName:joi.string().min(3).max(50).required(),
     lastName:joi.string().min(3).max(50).required(),
     email:joi.string().email().required(),
-    department:joi.string().valid("HR", "Accounting", "IT", "Administration","Operation","Digital Marketing","Sales",).required(),
+    
+    department:joi.string().valid("HR", "Accounting", "IT", "Administration","Operation","Digital Marketing","Sales").required(),
     hireDate:joi.date().required(),
     phone:joi.string().pattern(/^[0-9]{10,15}$/).required(),
     status:joi.string().valid("active", "inactive").default("active"),
@@ -23,7 +24,7 @@ export const updateEmployee=joi.object({
     firstName:joi.string().min(3).max(50).optional(),
     lastName:joi.string().min(3).max(50).optional(),
     email:joi.string().email().optional(),
-    department:joi.string().valid("HR", "Accounting", "IT", "Administration","Operation").optional(),
+    department:joi.string().valid("HR", "Accounting", "IT", "Administration","Operation","Digital Marketing","Sales").optional(),
     hireDate:joi.date().optional(),
     phone:joi.string().pattern(/^[0-9]{10,15}$/).optional(),
     status:joi.string().valid("active", "inactive").default("active"),
