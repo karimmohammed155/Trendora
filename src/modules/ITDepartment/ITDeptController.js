@@ -3,6 +3,7 @@ import { Department } from "../../../DB/models/departmentModel.js";
 import { Employee } from "../../../DB/models/employeeModel.js";
 import { Project } from "../../../DB/models/projectsModel.js";
 import { Ticket } from "../../../DB/models/ticketsModel.js";
+import { api_features } from "../../utils/api_features.utils.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { cloudinary } from "../../utils/cloudinary.js";
 import streamifier from "streamifier";
@@ -136,33 +137,54 @@ export const updateProject=asyncHandler(async(req,res,next)=>{
 });
 
 
-// GET /api/it/projects → Get all projects
-export const getAllProjects=asyncHandler(async(req,res,next)=>{
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+// GET /api/it/projects → Get all projectsexport const getAllProjects = asyncHandler(async (req, res, next) => {
+ export const getAllProjects = asyncHandler(async (req, res, next) => {
+  // ✅ Find the department (you can later make this dynamic via query param)
+  const department = await Department.findOne({ name: "IT" });
+  if (!department) {
+    return next(new Error("IT Department not found", { cause: 404 }));
+  }
 
-    const department=await Department.findOne({name:"IT"});
-    if(!department){
-        return next(new Error("IT Department not found",{cause:404}));
-    }
+  // ✅ Base query: all projects for that department
+  const query = Project.find({ department: department._id })
+    .populate("members", "firstName lastName email position startDate endDate");
 
-    const projects=await Project.find({department}).skip(skip).limit(limit).sort({ createdAt: -1 }).populate('members','firstName lastName email position startDate endDate');
-    if(projects.length===0){
-        return next(new Error("No projects found",{cause:404}));
-    }
+  // ✅ Apply filters, sorting, pagination
+  const features = new api_features(query, req.query)
+    .filterByStatus()
+    .sort()
+    .pagination();
 
-    return res.status(200).json({
-        success:true,
-        data:projects,
-        total: projects.length,
-        page: page,
-        limit: limit,
-        totalPages: Math.ceil( projects.length / limit),
-        createdAt: new Date()
+  // ✅ Execute query
+  const projects = await features.mongoose_query;
+
+  // ✅ Conditional total count based on status
+  let totalProjects;
+  if (req.query.status && req.query.status !== "all") {
+    totalProjects = await Project.countDocuments({
+      department: department._id,
+      status: req.query.status
     });
+  } else {
+    totalProjects = await Project.countDocuments({ department: department._id });
+  }
 
+  if (projects.length === 0) {
+    return next(new Error("No projects found", { cause: 404 }));
+  }
+
+  // ✅ Send response
+  return res.status(200).json({
+    success: true,
+    data: projects,
+    total: totalProjects,
+    page: parseInt(req.query.page) || 1,
+    limit: parseInt(req.query.limit) || 10,
+    totalPages: Math.ceil(totalProjects / (parseInt(req.query.limit) || 10)),
+    createdAt: new Date()
+  });
 });
+
 
 // DELETE /api/it/projects/:id → Delete project
 export const deleteProject=asyncHandler(async(req,res,next)=>{
@@ -226,20 +248,26 @@ export const deleteTicket=asyncHandler(async(req,res,next)=>{
 
 //get all tickets assigned to IT department
 export const getAllTickets = asyncHandler(async(req, res, next) => {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-
-    // Count total tickets
-    const totalTickets = await Ticket.countDocuments();
 
     // Get paginated tickets
-    const tickets = await Ticket.find()
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 })
-        .populate('employee', 'firstName lastName email');
+    const query =  Ticket.find();
+    const features = new api_features(query, req.query)
+    .filterByStatus()
+    .sort()
+    .pagination();
+    
+     const tickets = await features.mongoose_query;
 
+  // ✅ Conditional total count based on status
+  let totalTickets;
+  if (req.query.status && req.query.status !== "all") {
+    totalTickets = await Ticket.countDocuments({
+     
+      status: req.query.status
+    });
+  } else {
+    totalTickets = await Ticket.countDocuments();
+  }
     if (tickets.length === 0 && page === 1) {
         return next(new Error("No tickets found", {cause: 404}));
     }
@@ -248,10 +276,10 @@ export const getAllTickets = asyncHandler(async(req, res, next) => {
         success: true,
         data: tickets,
         total: totalTickets,
-        page: page,
-        limit: limit,
-        totalPages: Math.ceil(totalTickets / limit),
-        createdAt: new Date()
+          page: parseInt(req.query.page) || 1,
+    limit: parseInt(req.query.limit) || 10,
+    totalPages: Math.ceil(totalProjects / (parseInt(req.query.limit) || 10)),
+    createdAt: new Date()
     });
 });
 
