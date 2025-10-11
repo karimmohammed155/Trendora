@@ -1,6 +1,7 @@
 import { Campaign } from "../../../DB/models/campaignModel.js";
 import { Department } from "../../../DB/models/departmentModel.js";
 import { Employee } from "../../../DB/models/employeeModel.js";
+import { api_features } from "../../utils/api_features.utils.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
 
@@ -44,11 +45,42 @@ export const addCampaign=asyncHandler(async(req,res,next)=>{
 
 //get all campaigns
 export const getAllCampaigns=asyncHandler(async(req,res,next)=>{
-    const page= parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
 
-    const campaigns=await Campaign.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+
+    const query=await Campaign.find();
+    const features = new api_features(query, req.query)
+    .filterByStatus()
+    .sort()
+    .pagination();
+
+    
+  const campaigns = await features.mongoose_query;
+
+  // ✅ Conditional total count based on status
+  let totalProjects;
+  if (req.query.status && req.query.status !== "all") {
+    totalProjects = await Campaign.countDocuments({
+
+      status: req.query.status
+    });
+  } else {
+    totalProjects = await Campaign.countDocuments({ department: department._id });
+  }
+
+  if (campaigns.length === 0) {
+    return next(new Error("No projects found", { cause: 404 }));
+  }
+
+  // ✅ Send response
+  return res.status(200).json({
+    success: true,
+    data: campaigns,
+    total: totalProjects,
+    page: parseInt(req.query.page) || 1,
+    limit: parseInt(req.query.limit) || 10,
+    totalPages: Math.ceil(totalProjects / (parseInt(req.query.limit) || 10)),
+    createdAt: new Date()
+  });
     if(campaigns.length===0){
         return next(new Error("No campaigns found",{cause:404}));
     }
@@ -57,6 +89,7 @@ export const getAllCampaigns=asyncHandler(async(req,res,next)=>{
         data:campaigns
     });
 });
+
 
 //update campaign
 export const updateCampaign=asyncHandler(async(req,res,next)=>{

@@ -1,6 +1,7 @@
 import { Department } from "../../../DB/models/departmentModel.js";
 import { Employee } from "../../../DB/models/employeeModel.js";
 import { Project } from "../../../DB/models/projectsModel.js";
+import { api_features } from "../../utils/api_features.utils.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
 
@@ -117,6 +118,10 @@ export const getAllCustomers = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: customers });
 });
 
+
+
+
+
 // GET /api/customers/:id/projects
 export const getCustomerProjects = asyncHandler(async (req, res, next) => {
   const { customerName } = req.params;
@@ -135,26 +140,40 @@ export const getCustomerProjects = asyncHandler(async (req, res, next) => {
     department: department._id
   };
 
-  const projects = await Project.find(filter)
-    .skip(skip)
-    .limit(limit)
-    .sort({ createdAt: -1 })
-    .populate("members", "firstName lastName email position startDate endDate");
+  const query = await Project.find(filter)
+   const features = new api_features(query, req.query)
+    .filterByStatus()
+    .sort()
+    .pagination();
 
-  if (!projects.length) {
-    return next(new Error(`No projects found for customer ${customerName}`, { cause: 404 }));
+  // ✅ Execute query
+  const projects = await features.mongoose_query;
+
+  // ✅ Conditional total count based on status
+  let totalProjects;
+  if (req.query.status && req.query.status !== "all") {
+    totalProjects = await Project.countDocuments({
+      department: department._id,
+    customerName: { $regex: new RegExp(`^${customerName}$`, "i") },
+      status: req.query.status
+    });
+  } else {
+    totalProjects = await Project.countDocuments({ department: department._id });
   }
 
-  const total = await Project.countDocuments(filter);
+  if (projects.length === 0) {
+    return next(new Error("No projects found", { cause: 404 }));
+  }
 
+  // ✅ Send response
   return res.status(200).json({
     success: true,
     data: projects,
-    pagination: {
-      total,
-      page,
-      pages: Math.ceil(total / limit),
-    },
+    total: totalProjects,
+    page: parseInt(req.query.page) || 1,
+    limit: parseInt(req.query.limit) || 10,
+    totalPages: Math.ceil(totalProjects / (parseInt(req.query.limit) || 10)),
+    createdAt: new Date()
   });
 });
 
