@@ -76,8 +76,12 @@ export const getAllEmployees = asyncHandler(async (req, res, next) => {
     .pagination();
 
   const employees = await features.mongoose_query;
-  const totalEmployees = await Employee.countDocuments();
-
+let totalEmployees;;
+if (req.query.status && req.query.status !== 'all') {
+  totalEmployees = await Employee.countDocuments({ status: req.query.status });
+} else {
+  totalEmployees = await Employee.countDocuments();
+}
   if (employees.length === 0) {
     return next(new Error("No employees found", { cause: 404 }));
   }
@@ -193,7 +197,12 @@ export const getAllLeaves = asyncHandler(async (req, res, next) => {
     .pagination();
 
   const leaves = await features.mongoose_query;
-const totalLeaves = await Leave.countDocuments();
+let totalLeaves;
+if (req.query.status && req.query.status !== 'all') {
+  totalLeaves = await Leave.countDocuments({ status: req.query.status });
+} else {
+  totalLeaves = await Leave.countDocuments();
+}
   if (leaves.length === 0) {
     return next(new Error("No leaves found", { cause: 404 }));
   }
@@ -312,7 +321,12 @@ export const getPayroll = asyncHandler(async (req, res, next) => {
     .pagination();
 
   const payrolls = await features.mongoose_query;
-const totalPayrolls = await Payroll.countDocuments();
+let totalPayrolls;
+if (req.query.status && req.query.status !== 'all') {
+  totalPayrolls = await Payroll.countDocuments({ status: req.query.status });
+} else {
+  totalPayrolls = await Payroll.countDocuments();
+}
   if (payrolls.length === 0) {
     return next(new Error("No payrolls found", { cause: 404 }));
   }
