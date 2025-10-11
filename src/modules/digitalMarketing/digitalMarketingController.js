@@ -120,50 +120,43 @@ export const getAllCustomers = asyncHandler(async (req, res, next) => {
 
 
 
-
-
-// GET /api/customers/:id/projects
+// GET /api/customers/:customerName/projects
 export const getCustomerProjects = asyncHandler(async (req, res, next) => {
   const { customerName } = req.params;
-
 
   const department = await Department.findOne({ name: "Digital Marketing" });
   if (!department) {
     return next(new Error("Digital Marketing Department not found", { cause: 404 }));
   }
 
-  // Filter by BOTH customer and department
-  const filter = {
-    customerName: { $regex: new RegExp(`^${customerName}$`, "i") }, // case-insensitive match
+  // Base filter by customer and department
+  const baseFilter = {
+    customerName: { $regex: new RegExp(`^${customerName}$`, "i") }, // case-insensitive exact match
     department: department._id
   };
 
-  const query = await Project.find(filter)
-   const features = new api_features(query, req.query)
+  // Base Mongoose query
+  const query = Project.find(baseFilter);
+
+  // Apply API features (status filter, sorting, pagination)
+  const features = new api_features(query, req.query)
     .filterByStatus()
     .sort()
     .pagination();
 
-  // ✅ Execute query
   const projects = await features.mongoose_query;
 
-  // ✅ Conditional total count based on status
-  let totalProjects;
+  // Conditional total count based on status
+  const countFilter = { ...baseFilter };
   if (req.query.status && req.query.status !== "all") {
-    totalProjects = await Project.countDocuments({
-      department: department._id,
-    customerName: { $regex: new RegExp(`^${customerName}$`, "i") },
-      status: req.query.status
-    });
-  } else {
-    totalProjects = await Project.countDocuments({ department: department._id });
+    countFilter.status = req.query.status;
   }
+  const totalProjects = await Project.countDocuments(countFilter);
 
   if (projects.length === 0) {
     return next(new Error("No projects found", { cause: 404 }));
   }
 
-  // ✅ Send response
   return res.status(200).json({
     success: true,
     data: projects,
