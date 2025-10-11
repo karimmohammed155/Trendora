@@ -6,6 +6,7 @@ import { Payroll } from "../../../DB/models/payrollModel.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { Attendance } from "../../../DB/models/attendanceModel.js";
 import { cloudinary } from "../../utils/cloudinary.js";
+import { api_features } from "../../utils/api_features.utils.js";
 
 
 //Employees
@@ -65,30 +66,28 @@ export const deleteEmployee=asyncHandler(async(req,res,next)=>{
         message:"Employee deleted successfully"
     });
 });
+// Get all employees
+export const getAllEmployees = asyncHandler(async (req, res, next) => {
+  const query = Employee.find().populate("department");
+  const features = new api_features(query, req.query)
+    .filterByStatus()
+    .sort()
+    .pagination();
 
-//get all employees
-export const getAllEmployees=asyncHandler(async(req,res,next)=>{
-    
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-    
-    const employees=await Employee.find(); 
-    const new_api_feature = new api_features(employees, req.query)
-        .pagination()
-        .sort()
-        .filterByStatus();
-    if(employees.length===0){
-        return next(new Error("No employees found",{cause:404}));
-    }           
-    const totalEmployees=employees.length;
-    return res.status(200).json({
-        success:true,
-        data:employees,
-        totalEmployees,
-        
-    });
+  const employees = await features.mongoose_query;
+  const totalEmployees = await Employee.countDocuments();
+
+  if (employees.length === 0) {
+    return next(new Error("No employees found", { cause: 404 }));
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: employees,
+    totalEmployees
+  });
 });
+
 
 //get employee by id
 export const getEmployeeById=asyncHandler(async(req,res,next)=>{
@@ -184,24 +183,26 @@ export const getAllDepartments=asyncHandler(async(req,res,next)=>{
 });
 
 //Leaves
-//get all leaves
-export const getAllLeaves=asyncHandler(async(req,res,next)=>{  
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit; 
-    const leaves=await Leave.find().populate('employee','firstName lastName email');
-       const new_api_feature = new api_features(leaves, req.query)
-        .pagination()
-        .sort()
-        .filterByStatus();
-    if(leaves.length===0){
-        return next(new Error("No leaves found",{cause:404}));
-    }
-    return res.status(200).json({
-        success:true,
-        data:leaves
-    });
+// Get all leaves
+export const getAllLeaves = asyncHandler(async (req, res, next) => {
+  const query = Leave.find().populate("employee", "firstName lastName email");
+  const features = new api_features(query, req.query)
+    .filterByStatus()
+    .sort()
+    .pagination();
+
+  const leaves = await features.mongoose_query;
+
+  if (leaves.length === 0) {
+    return next(new Error("No leaves found", { cause: 404 }));
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: leaves
+  });
 });
+
 
 //update leave status
 export const updateLeaveStatus=asyncHandler(async(req,res,next)=>{
@@ -300,24 +301,24 @@ export const generatePayslip=asyncHandler(async(req,res,next)=>{
     });
 });
 
-//get all payroll
-export const getPayroll=asyncHandler(async(req,res,next)=>{
-        const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-    const payrolls=await Payroll.find().populate('employee','firstName lastName email position');
-       const new_api_feature = new api_features(payrolls, req.query)
-        .pagination()
-        .sort()
-        .filterByStatus();
-    if(payrolls.length===0){
-        return next(new Error("No payrolls found",{cause:404}));
-    }
+// Get all payrolls
+export const getPayroll = asyncHandler(async (req, res, next) => {
+  const query = Payroll.find().populate("employee", "firstName lastName email position");
+  const features = new api_features(query, req.query)
+    .filterByStatus()
+    .sort()
+    .pagination();
 
-    return res.status(200).json({
-        success:true,
-        data:payrolls
-    });
+  const payrolls = await features.mongoose_query;
+
+  if (payrolls.length === 0) {
+    return next(new Error("No payrolls found", { cause: 404 }));
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: payrolls
+  });
 });
 
 //update payroll
