@@ -17,8 +17,7 @@ export const authorizeDepartment = (requiredDepartment) => {
         return res.status(404).json({ message: "Department not found" });
 
       // 🧩 Compare user's department with required one
-      console.log("User's department:", user.department);
-      console.log("Required department:", department._id);
+
       if (!user.department.equals(department._id)) {
   return res.status(403).json({ message: "Access denied for this department" });
 }
