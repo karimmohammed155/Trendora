@@ -31,7 +31,7 @@ export const updateProjectSchema = joi
       .valid("planned", "in_progress", "on_hold", "completed")
       .default("planned"),
     members: joi.array().items(joi.custom(isValidObjectId)).min(1).optional(),
-    notes: joi.string().max(1000).allow(" "),
+    notes: joi.string().max(1000).allow(""),
     startDate: joi.date().optional(),
     endDate: joi.date().optional(),
   })
