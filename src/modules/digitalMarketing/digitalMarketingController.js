@@ -142,29 +142,26 @@ export const getAllProjects = asyncHandler(async (req, res, next) => {
 
 // GET /api/customers
 export const getAllCustomers = asyncHandler(async (req, res, next) => {
-  const query = await Project.distinct("customerName");
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
 
-  const features = new api_features(query, req.query).sort().pagination();
+  const customers = await Project.distinct("customerName");
 
-  const customers = await features.mongoose_query;
+  const paginatedCustomers = customers.slice(skip, skip + limit);
+
   if (!customers.length)
     return next(new Error("No customers found", { cause: 404 }));
-  const totalCustomersLength = customers.length;
 
-  res
-    .status(200)
-    .json({
-      success: true,
-      success: true,
-      data: customers,
-      total: totalCustomersLength,
-      page: parseInt(req.query.page) || 1,
-      limit: parseInt(req.query.limit) || 10,
-      totalPages: Math.ceil(
-        totalCustomersLength / (parseInt(req.query.limit) || 10)
-      ),
-      createdAt: new Date(),
-    });
+  res.status(200).json({
+    success: true,
+    data: paginatedCustomers,
+    total: customers.length,
+    page: page,
+    limit: limit,
+    totalPages: Math.ceil(customers.length / limit),
+    createdAt: new Date(),
+  });
 });
 
 // GET /api/customers/:customerName/projects
