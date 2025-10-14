@@ -24,7 +24,13 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 // Enable CORS for all routes
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://trendora-front.vercel.app", // frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // if you send cookies/auth headers
+  })
+);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
