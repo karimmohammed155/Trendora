@@ -57,6 +57,14 @@ app.all("/{*any}", (req, res, next) => {
 
 app.use(global_response);
 
+// ✅ Prevent old service worker caching
+app.use((req, res, next) => {
+  if (req.url === "/service-worker.js") {
+    res.setHeader("Cache-Control", "no-cache");
+  }
+  next();
+});
+
 // Serve static files (React build)
 app.use(express.static(path.join(__dirname, "dist"))); // or "dist" if using Vite
 
