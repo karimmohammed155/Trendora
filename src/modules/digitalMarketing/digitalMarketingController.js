@@ -82,8 +82,16 @@ export const createProject = asyncHandler(async (req, res, next) => {
 //update project
 export const updateProject = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { name, description, status, members, notes, startDate, endDate } =
-    req.body;
+  const {
+    name,
+    customerName,
+    description,
+    status,
+    members,
+    notes,
+    startDate,
+    endDate,
+  } = req.body;
 
   const membersExit = await Employee.find({ _id: { $in: members } });
   if (membersExit.length !== members.length) {
@@ -92,7 +100,16 @@ export const updateProject = asyncHandler(async (req, res, next) => {
 
   const updatedProject = await Project.findByIdAndUpdate(
     id,
-    { name, description, status, members, notes, startDate, endDate },
+    {
+      name,
+      customerName,
+      description,
+      status,
+      members,
+      notes,
+      startDate,
+      endDate,
+    },
     { new: true }
   );
 
