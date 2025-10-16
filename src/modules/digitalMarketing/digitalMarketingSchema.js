@@ -25,7 +25,7 @@ export const updateProjectSchema = joi
     id: joi.custom(isValidObjectId).required(),
     name: joi.string().min(3).max(100).optional(),
     customerName: joi.string().max(100).optional(),
-    description: joi.string().max(500).optional(),
+    description: joi.string().max(500).allow("").optional(),
     status: joi
       .string()
       .valid("planned", "in_progress", "on_hold", "completed")
