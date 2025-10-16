@@ -5,7 +5,7 @@ import { isValidObjectId } from "../../middlewares/validationMiddleware.js";
 //add campaign
 export const addCampaignSchema = joi.object({
   name: joi.string().min(3).max(50).required(),
-  description: joi.string().max(500).optional(),
+  description: joi.string().allow("").max(500).optional(),
   customerName: joi.string().max(100).optional(),
   startDate: joi.date().required(),
   endDate: joi.date().greater(joi.ref("startDate")).required(),
@@ -21,7 +21,7 @@ export const updateCampaignSchema = joi.object({
   id: joi.custom(isValidObjectId).required(),
   name: joi.string().min(3).max(50).optional(),
   customerName: joi.string().max(100).optional(),
-  description: joi.string().max(500).optional(),
+  description: joi.string().allow("").max(500).optional(),
   startDate: joi.date().optional(),
   endDate: joi.date().greater(joi.ref("startDate")).optional(),
   status: joi
