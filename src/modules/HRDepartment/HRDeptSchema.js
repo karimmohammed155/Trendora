@@ -31,7 +31,7 @@ export const addNewEmployee = joi
       .string()
       .valid("Admin", "Manager", "Accountant", "IT Staff", "Employee", "HR")
       .default("Employee"),
-    address: joi.string().min(5).max(200).optional(),
+    address: joi.string().min(5).max(200).allow("").optional(),
     submittedDocuments: joi.array().items(joi.string()).optional(),
     pendingDocuments: joi.array().items(joi.string()).optional(),
   })
