@@ -8,67 +8,79 @@ import { Attendance } from "../../../DB/models/attendanceModel.js";
 import { cloudinary } from "../../utils/cloudinary.js";
 import { api_features } from "../../utils/api_features.utils.js";
 
-
 //Employees
 //add new employee
-export const addNewEmployee=asyncHandler(async(req,res,next)=>{
+export const addNewEmployee = asyncHandler(async (req, res, next) => {
+  const department = await Department.findOne({ name: req.body.department });
+  if (!department) {
+    return next(
+      new Error(`Department ${req.body.department} not found`, { cause: 404 })
+    );
+  }
 
+  const passwordHashed = hashSync(
+    `${req.body.firstName}@1234`,
+    +process.env.SALT_ROUNDS
+  );
 
-    const department = await Department.findOne({ name: req.body.department });
-    if (!department) {
-        return next(new Error(`Department ${req.body.department} not found`, { cause: 404 }));
-    }
-
-    const passwordHashed=hashSync(`${req.body.firstName}@1234`, +process.env.SALT_ROUNDS);
-
-    const employee=await Employee.create({...req.body,department:department._id,password:passwordHashed});
-    return res.status(200).json({
-        success:true,
-        message:"Employee added successfully",
-        data:employee
-    });
+  const employee = await Employee.create({
+    ...req.body,
+    department: department._id,
+    password: passwordHashed,
+  });
+  return res.status(200).json({
+    success: true,
+    message: "Employee added successfully",
+    data: employee,
+  });
 });
 
 //update employee
-export const updateEmployee=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-    let departmentName
-    if(req.body.department){
-        departmentName = req.body.department;
+export const updateEmployee = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  let departmentName;
+  if (req.body.department) {
+    departmentName = req.body.department;
 
-    departmentName=await Department.findOne({ name: departmentName });
+    departmentName = await Department.findOne({ name: departmentName });
     if (!departmentName) {
-        return next(new Error(`Department ${req.body.department} not found`, { cause: 404 }));
+      return next(
+        new Error(`Department ${req.body.department} not found`, { cause: 404 })
+      );
     }
-    }
+  }
 
-    const employee=await Employee.findByIdAndUpdate(id,{...req.body,department:departmentName},{new:true});
+  const employee = await Employee.findByIdAndUpdate(
+    id,
+    { ...req.body, department: departmentName },
+    { new: true }
+  );
 
-    if(!employee){
-        return next(new Error("No employee with this id",{cause:404}));
-    }
-    return res.status(200).json({
-        success:true,
-        message:"Employee updated successfully",
-        data:employee
-    });
+  if (!employee) {
+    return next(new Error("No employee with this id", { cause: 404 }));
+  }
+  return res.status(200).json({
+    success: true,
+    message: "Employee updated successfully",
+    data: employee,
+  });
 });
 
 //delete employee
-export const deleteEmployee=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-    const employee=await Employee.findByIdAndDelete(id);
-    if(!employee){
-        return next(new Error("No employee with this id",{cause:404}));
-    }
-    return res.status(200).json({
-        success:true,
-        message:"Employee deleted successfully"
-    });
+export const deleteEmployee = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const employee = await Employee.findByIdAndDelete(id);
+  if (!employee) {
+    return next(new Error("No employee with this id", { cause: 404 }));
+  }
+  return res.status(200).json({
+    success: true,
+    message: "Employee deleted successfully",
+  });
 });
 // Get all employees
 export const getAllEmployees = asyncHandler(async (req, res, next) => {
-  const query = Employee.find().populate("department","name");
+  const query = Employee.find().populate("department", "name");
 
   const features = new api_features(query, req.query)
     .filterByStatus()
@@ -76,115 +88,118 @@ export const getAllEmployees = asyncHandler(async (req, res, next) => {
     .pagination();
 
   const employees = await features.mongoose_query;
-let totalEmployees;;
-if (req.query.status && req.query.status !== 'all') {
-  totalEmployees = await Employee.countDocuments({ status: req.query.status });
-} else {
-  totalEmployees = await Employee.countDocuments();
-}
+  let totalEmployees;
+  if (req.query.status && req.query.status !== "all") {
+    totalEmployees = await Employee.countDocuments({
+      status: req.query.status,
+    });
+  } else {
+    totalEmployees = await Employee.countDocuments();
+  }
   if (employees.length === 0) {
-    return next(new Error("No employees found", { cause: 404 }));
+    return res.status(200).json({
+      success: true,
+      data: [],
+      totalPayrolls: 0,
+    });
   }
 
   return res.status(200).json({
     success: true,
     data: employees,
-    totalEmployees
+    totalEmployees,
   });
 });
 
-
 //get employee by id
-export const getEmployeeById=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-    const employee=await Employee.findById(id);
-    if(!employee){
-        return next(new Error("No employee with this id",{cause:404}));
-    }   
-    return res.status(200).json({
-        success:true,
-        data:employee,
-        
-
-    });
+export const getEmployeeById = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const employee = await Employee.findById(id);
+  if (!employee) {
+    return next(new Error("No employee with this id", { cause: 404 }));
+  }
+  return res.status(200).json({
+    success: true,
+    data: employee,
+  });
 });
 
 //Departments
 //add new department
-export const addNewDepartment=asyncHandler(async(req,res,next)=>{
-    //check if department already exists
-    const existingDepartment=await Department.findOne({name:req.body.name});
-    if(existingDepartment){
-        return next(new Error("Department already exists",{cause:409}));
-    }       
-    const department=await Department.create({ name: req.body.name });
-    return res.status(200).json({
-        success:true,
-        message:"Department added successfully",
-        data:department
-    });
+export const addNewDepartment = asyncHandler(async (req, res, next) => {
+  //check if department already exists
+  const existingDepartment = await Department.findOne({ name: req.body.name });
+  if (existingDepartment) {
+    return next(new Error("Department already exists", { cause: 409 }));
+  }
+  const department = await Department.create({ name: req.body.name });
+  return res.status(200).json({
+    success: true,
+    message: "Department added successfully",
+    data: department,
+  });
 });
 
 //update department
-export const updateDepartment=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-    const { name: newName } = req.body;
+export const updateDepartment = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { name: newName } = req.body;
 
-       // Find the department
-    const department = await Department.findById(id);
-    if (!department) {
-        return next(new Error("No department with this id", { cause: 404 }));
-    }
+  // Find the department
+  const department = await Department.findById(id);
+  if (!department) {
+    return next(new Error("No department with this id", { cause: 404 }));
+  }
 
-    // Update department name
-    department.name = newName;
-    await department.save();
+  // Update department name
+  department.name = newName;
+  await department.save();
 
-    // Update all employees that have this department ObjectId
-    await Employee.updateMany(
-        { department: department._id },
-        { department: department._id } // ObjectId stays the same, name is in Department collection
-    );
+  // Update all employees that have this department ObjectId
+  await Employee.updateMany(
+    { department: department._id },
+    { department: department._id } // ObjectId stays the same, name is in Department collection
+  );
 
-    return res.status(200).json({
-        success: true,
-        message: "Department updated successfully",
-        data: department
-    });
+  return res.status(200).json({
+    success: true,
+    message: "Department updated successfully",
+    data: department,
+  });
 });
 
 //delete department
-export const deleteDepartment=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-   
-    // Find the department
-    const department = await Department.findById(id);
-    if (!department) {
-        return next(new Error("No department with this id", { cause: 404 }));
-    }
+export const deleteDepartment = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
 
-    // Delete all employees in this department
-    await Employee.deleteMany({ department: department._id });
+  // Find the department
+  const department = await Department.findById(id);
+  if (!department) {
+    return next(new Error("No department with this id", { cause: 404 }));
+  }
 
-    // Delete the department
-    await department.deleteOne();
+  // Delete all employees in this department
+  await Employee.deleteMany({ department: department._id });
 
-    return res.status(200).json({
-        success:true,
-        message:"Department deleted successfully"
-    });
+  // Delete the department
+  await department.deleteOne();
+
+  return res.status(200).json({
+    success: true,
+    message: "Department deleted successfully",
+  });
 });
 
 //get all departments
-export const getAllDepartments=asyncHandler(async(req,res,next)=>{
-    const departments=await Department.find();
-    if(departments.length===0){
-        return next(new Error("No departments found",{cause:404}));
-    }   
-    return res.status(200).json({
-        success:true,
-        data:departments    
-    });
+export const getAllDepartments = asyncHandler(async (req, res, next) => {
+  const departments = await Department.find();
+  if (departments.length === 0) {
+    return next(new Error("No departments found", { cause: 404 }));
+  }
+  return res.status(200).json({
+    success: true,
+    data: departments,
+  });
 });
 
 //Leaves
@@ -197,66 +212,70 @@ export const getAllLeaves = asyncHandler(async (req, res, next) => {
     .pagination();
 
   const leaves = await features.mongoose_query;
-let totalLeaves;
-if (req.query.status && req.query.status !== 'all') {
-  totalLeaves = await Leave.countDocuments({ status: req.query.status });
-} else {
-  totalLeaves = await Leave.countDocuments();
-}
+  let totalLeaves;
+  if (req.query.status && req.query.status !== "all") {
+    totalLeaves = await Leave.countDocuments({ status: req.query.status });
+  } else {
+    totalLeaves = await Leave.countDocuments();
+  }
   if (leaves.length === 0) {
-    return next(new Error("No leaves found", { cause: 404 }));
+    return res.status(200).json({
+      success: true,
+      data: [],
+      totalPayrolls: 0,
+    });
   }
 
   return res.status(200).json({
     success: true,
     data: leaves,
-    totalLeaves
+    totalLeaves,
   });
 });
 
-
 //update leave status
-export const updateLeaveStatus=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-    const {status}=req.body;
-    const updatedLeave=await Leave.findByIdAndUpdate(id,
-        {status},
-        {new:true}
-    );  
-    if(!updatedLeave){
-        return next(new Error("No leave with this id",{cause:404}));
-    }
-    return res.json({
-        success:true,
-        message:"Leave status updated successfully",
-        data:updatedLeave
-    });
+export const updateLeaveStatus = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const updatedLeave = await Leave.findByIdAndUpdate(
+    id,
+    { status },
+    { new: true }
+  );
+  if (!updatedLeave) {
+    return next(new Error("No leave with this id", { cause: 404 }));
+  }
+  return res.json({
+    success: true,
+    message: "Leave status updated successfully",
+    data: updatedLeave,
+  });
 });
 
 //delete leave
-export const deleteLeave=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-    const deletedLeave=await Leave.findByIdAndDelete(id);
-    if(!deletedLeave){
-        return next(new Error("No leave with this id",{cause:404}));
-    }
-    return res.status(200).json({
-        success:true,
-        message:"Leave deleted successfully"
-    })
+export const deleteLeave = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const deletedLeave = await Leave.findByIdAndDelete(id);
+  if (!deletedLeave) {
+    return next(new Error("No leave with this id", { cause: 404 }));
+  }
+  return res.status(200).json({
+    success: true,
+    message: "Leave deleted successfully",
+  });
 });
 
 //payrolls::
 
 //generate payslip
-export const generatePayslip=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-    const employee=await Employee.findById(id);
-    if(!employee){
-        return next(new Error("No employee with this id",{cause:404}));
-    }
+export const generatePayslip = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const employee = await Employee.findById(id);
+  if (!employee) {
+    return next(new Error("No employee with this id", { cause: 404 }));
+  }
 
-      // extract values from req.body
+  // extract values from req.body
   const {
     baseSalary,
     overtimeHours = 0,
@@ -266,12 +285,12 @@ export const generatePayslip=asyncHandler(async(req,res,next)=>{
     benefits = 0,
     taxes = 0,
     payDate,
-    status = "pending"
+    status = "pending",
   } = req.body;
 
-    const existingPayslip = await Payroll.findOne({
+  const existingPayslip = await Payroll.findOne({
     employee: employee._id,
-    payDate
+    payDate,
   });
 
   if (existingPayslip) {
@@ -285,7 +304,7 @@ export const generatePayslip=asyncHandler(async(req,res,next)=>{
   // calculate net pay directly here
   const netPay =
     baseSalary +
-    (overtimeHours * overtimeRate) +
+    overtimeHours * overtimeRate +
     bonuses +
     benefits -
     (deductions + taxes);
@@ -300,48 +319,56 @@ export const generatePayslip=asyncHandler(async(req,res,next)=>{
     deductions,
     benefits,
     taxes,
-    netPay,   // 👈 directly set here
+    netPay, // 👈 directly set here
     payDate,
-    status
+    status,
   });
 
-    return res.status(200).json({
-        success:true,
-        message:"Payslip generated successfully",
-        data:payslip
-    });
+  return res.status(200).json({
+    success: true,
+    message: "Payslip generated successfully",
+    data: payslip,
+  });
 });
 
 // Get all payrolls
 export const getPayroll = asyncHandler(async (req, res, next) => {
-  const query = Payroll.find().populate("employee", "firstName lastName email position");
+  const query = Payroll.find().populate(
+    "employee",
+    "firstName lastName email position"
+  );
+
   const features = new api_features(query, req.query)
     .filterByStatus()
     .sort()
     .pagination();
 
   const payrolls = await features.mongoose_query;
-let totalPayrolls;
-if (req.query.status && req.query.status !== 'all') {
-  totalPayrolls = await Payroll.countDocuments({ status: req.query.status });
-} else {
-  totalPayrolls = await Payroll.countDocuments();
-}
+  let totalPayrolls;
+  if (req.query.status && req.query.status !== "all") {
+    totalPayrolls = await Payroll.countDocuments({ status: req.query.status });
+  } else {
+    totalPayrolls = await Payroll.countDocuments();
+  }
   if (payrolls.length === 0) {
-    return next(new Error("No payrolls found", { cause: 404 }));
+    return res.status(200).json({
+      success: true,
+      data: [],
+      totalPayrolls: 0,
+    });
   }
 
   return res.status(200).json({
     success: true,
     data: payrolls,
-    totalPayrolls
+    totalPayrolls,
   });
 });
 
 //update payroll
-export const updatePayroll=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-      const {
+export const updatePayroll = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const {
     baseSalary,
     overtimeHours = 0,
     overtimeRate = 0,
@@ -350,91 +377,97 @@ export const updatePayroll=asyncHandler(async(req,res,next)=>{
     benefits = 0,
     taxes = 0,
   } = req.body;
-      const netPay =
+  const netPay =
     baseSalary +
-    (overtimeHours * overtimeRate) +
+    overtimeHours * overtimeRate +
     bonuses +
     benefits -
     (deductions + taxes);
-    const updatedPayroll=await Payroll.findByIdAndUpdate(id,
-        {...req.body,netPay},
-        {new:true}
-    );
+  const updatedPayroll = await Payroll.findByIdAndUpdate(
+    id,
+    { ...req.body, netPay },
+    { new: true }
+  );
 
-    if(!updatedPayroll){
-        return next(new Error("No payroll with this id",{cause:404}));
-    }   
-    return res.json({
-        success:true,
-        message:"Payroll updated successfully",
-        data:updatedPayroll
-    });
+  if (!updatedPayroll) {
+    return next(new Error("No payroll with this id", { cause: 404 }));
+  }
+  return res.json({
+    success: true,
+    message: "Payroll updated successfully",
+    data: updatedPayroll,
+  });
 });
 
 //get specific payslip
-export const getPayslip=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-    const employeeExists = await Employee.findById(id);
-    if (!employeeExists) {
-        return next(new Error("No employee with this id", { cause: 404 }));
-    }
+export const getPayslip = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const employeeExists = await Employee.findById(id);
+  if (!employeeExists) {
+    return next(new Error("No employee with this id", { cause: 404 }));
+  }
 
-    // get all payrolls for this employee
-    const payrolls = await Payroll.find({ employee: id })
-        .populate('employee', 'firstName lastName email position')
-        .sort({ payDate: -1 }); // latest first
+  // get all payrolls for this employee
+  const payrolls = await Payroll.find({ employee: id })
+    .populate("employee", "firstName lastName email position")
+    .sort({ payDate: -1 }); // latest first
 
-    return res.status(200).json({
-        success: true,
-        data: payrolls
-    });
+  return res.status(200).json({
+    success: true,
+    data: payrolls,
+  });
 });
 
-export const deletePayroll=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
-    const deletedPayroll=await Payroll.findByIdAndDelete(id);
-    if(!deletedPayroll){
-        return next(new Error("No payroll with this id",{cause:404}));
-    }   
-    return res.status(200).json({
-        success:true,
-        message:"Payroll deleted successfully"
-    });
+export const deletePayroll = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const deletedPayroll = await Payroll.findByIdAndDelete(id);
+  if (!deletedPayroll) {
+    return next(new Error("No payroll with this id", { cause: 404 }));
+  }
+  return res.status(200).json({
+    success: true,
+    message: "Payroll deleted successfully",
+  });
 });
 
-export const getAttendance=asyncHandler(async(req,res,next)=>{
-    const page= parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-    const sheets=await Attendance.find().skip(skip).limit(limit).sort({ createdAt: -1 });
+export const getAttendance = asyncHandler(async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  const sheets = await Attendance.find()
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 });
 
-    if(sheets.length===0){
-        return next(new Error("No attendance sheets found",{cause:404}));
-    }
+  if (sheets.length === 0) {
     return res.status(200).json({
-        success:true,
-        data:sheets
+      success: true,
+      data: [],
+      totalPayrolls: 0,
     });
+  }
+  return res.status(200).json({
+    success: true,
+    data: sheets,
+  });
 });
 
+export const deleteSheet = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
 
-export const deleteSheet=asyncHandler(async(req,res,next)=>{
-    const {id}=req.params;
+  const attendance = await Attendance.findOne({ _id: id });
 
-    const attendance=await Attendance.findOne({ _id:id });
+  if (!attendance) {
+    return next(new Error("No sheet with this id", { cause: 404 }));
+  }
+  // Delete from Cloudinary
+  if (attendance.sheet?.id) {
+    await cloudinary.uploader.destroy(attendance.sheet.id);
+  }
+  await Attendance.findByIdAndDelete(id);
 
-    if(!attendance){
-        return next(new Error("No sheet with this id",{cause:404}));
-    }
-    // Delete from Cloudinary
-     if (attendance.sheet?.id) {
-      await cloudinary.uploader.destroy(attendance.sheet.id);
-    }
-    await Attendance.findByIdAndDelete(id);
-    
-    return res.status(200).json({
-        success:true,
-        message:"Attendance sheet deleted successfully"
-    });
-
-})
+  return res.status(200).json({
+    success: true,
+    message: "Attendance sheet deleted successfully",
+  });
+});
