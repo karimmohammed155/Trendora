@@ -5,6 +5,14 @@ import { validation } from "../../middlewares/validationMiddleware.js";
 import { addLeaveSchema } from "../dashboard/dashboardSchema.js";
 import { addLeave } from "../dashboard/dashboardController.js";
 import { fileUpload } from "../../utils/fileUpload.js";
+import {
+  deleteLeaveSchema,
+  updateLeaveSchema,
+} from "../HRDepartment/HRDeptSchema.js";
+import {
+  deleteLeave,
+  updateLeaveStatus,
+} from "../HRDepartment/HRDeptController.js";
 const router = Router();
 
 //add leave
@@ -80,5 +88,11 @@ router.post(
 
 //get all departments leaves
 router.get("/ItLeaves/:departmentId", ITDeptController.getDepartmentLeaves);
+
+//update leave status
+router.put("/leaves/:id", validation(updateLeaveSchema), updateLeaveStatus);
+
+//delete leave
+router.delete("/leaves/:id", validation(deleteLeaveSchema), deleteLeave);
 
 export default router;

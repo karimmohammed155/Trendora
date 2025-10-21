@@ -16,6 +16,16 @@ import {
   addTicketSchema,
 } from "../dashboard/dashboardSchema.js";
 import { addLeave, addTicket } from "../dashboard/dashboardController.js";
+
+import {
+  deleteLeaveSchema,
+  updateLeaveSchema,
+} from "../HRDepartment/HRDeptSchema.js";
+import {
+  deleteLeave,
+  updateLeaveStatus,
+} from "../HRDepartment/HRDeptController.js";
+
 const router = Router();
 
 //ratings:
@@ -59,5 +69,11 @@ router.post("/tickets", validation(addTicketSchema), addTicket);
 
 //get Departments leaves
 router.get("/OperationLeaves/:departmentId", getDepartmentLeaves);
+
+//update leave status
+router.put("/leaves/:id", validation(updateLeaveSchema), updateLeaveStatus);
+
+//delete leave
+router.delete("/leaves/:id", validation(deleteLeaveSchema), deleteLeave);
 
 export default router;
