@@ -135,4 +135,7 @@ router.delete(
   HRDeptController.deleteAdvance
 );
 
+//get all advances
+router.get("/advances", HRDeptController.getAllAdvances);
+
 export default router;

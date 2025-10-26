@@ -223,7 +223,7 @@ export const getAllLeaves = asyncHandler(async (req, res, next) => {
     return res.status(200).json({
       success: true,
       data: [],
-      totalPayrolls: 0,
+      totalLeaves: 0,
     });
   }
 
@@ -528,5 +528,34 @@ export const deleteAdvance = asyncHandler(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     message: "Advance deleted successfully",
+  });
+});
+
+export const getAllAdvances = asyncHandler(async (req, res, next) => {
+  const query = Advance.find().populate("employee", "firstName lastName email");
+  const features = new api_features(query, req.query)
+    .filterByStatus()
+    .sort()
+    .pagination();
+
+  const advances = await features.mongoose_query;
+  let totalAdvances;
+  if (req.query.status && req.query.status !== "all") {
+    totalAdvances = await Advance.countDocuments({ status: req.query.status });
+  } else {
+    totalAdvances = await Leave.countDocuments();
+  }
+  if (advances.length === 0) {
+    return res.status(200).json({
+      success: true,
+      data: [],
+      totalAdvances: 0,
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: advances,
+    totalAdvances,
   });
 });
