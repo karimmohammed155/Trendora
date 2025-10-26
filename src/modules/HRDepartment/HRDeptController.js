@@ -7,7 +7,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { Attendance } from "../../../DB/models/attendanceModel.js";
 import { cloudinary } from "../../utils/cloudinary.js";
 import { api_features } from "../../utils/api_features.utils.js";
-import { Advance } from "../../../DB/models/AdvanceModel.js";
+import { Advance } from "../../../DB/models/advanceModel.js";
 
 //Employees
 //add new employee
