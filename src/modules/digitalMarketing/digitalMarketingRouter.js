@@ -14,8 +14,13 @@ import { validation } from "../../middlewares/validationMiddleware.js";
 import {
   addLeaveSchema,
   addTicketSchema,
+  requestAdvanceSchema,
 } from "../dashboard/dashboardSchema.js";
-import { addLeave, addTicket } from "../dashboard/dashboardController.js";
+import {
+  addLeave,
+  addTicket,
+  requestAdvance,
+} from "../dashboard/dashboardController.js";
 
 import {
   deleteLeaveSchema,
@@ -84,5 +89,8 @@ router.put("/leaves/:id", validation(updateLeaveSchema), updateLeaveStatus);
 
 //delete leave
 router.delete("/leaves/:id", validation(deleteLeaveSchema), deleteLeave);
+
+//sumit advance
+router.post("/advance", validation(requestAdvanceSchema), requestAdvance);
 
 export default router;

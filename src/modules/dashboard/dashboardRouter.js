@@ -1,18 +1,39 @@
 import { Router } from "express";
-import { addLeaveSchema,addTicketSchema } from "./dashboardSchema.js";
+import * as dashboardSchema from "./dashboardSchema.js";
 import { validation } from "../../middlewares/validationMiddleware.js";
-import { addLeave,addTicket, getAllEmployeesLeaves, getAllEmployeesTickets } from "./dashboardController.js";
+import * as dashboardController from "./dashboardController.js";
 import { auth } from "../../middlewares/auth_middleware.js";
-const router= Router();
+const router = Router();
 
 //Add leave
-router.post('/leaves',auth(),validation(addLeaveSchema),addLeave);
+router.post(
+  "/leaves",
+  auth(),
+  validation(dashboardSchema.addLeaveSchema),
+  dashboardController.addLeave
+);
 
 //Add ticket
-router.post('/tickets',auth(),validation(addTicketSchema),addTicket);
+router.post(
+  "/tickets",
+  auth(),
+  validation(dashboardSchema.addTicketSchema),
+  dashboardController.addTicket
+);
 
-router.get('/leaves',auth(),getAllEmployeesLeaves)
+router.get("/leaves", auth(), dashboardController.getAllEmployeesLeaves);
 
-router.get('/tickets',auth(),getAllEmployeesTickets);
+router.get("/tickets", auth(), dashboardController.getAllEmployeesTickets);
 
+//request Advance
+router.post(
+  "/advance",
+  auth(),
+  validation(dashboardSchema.requestAdvanceSchema),
+  dashboardController.requestAdvance
+);
+
+//get employees Advances
+
+router.get("/advance", auth(), dashboardController.getEmployeesAdvances);
 export default router;

@@ -8,7 +8,6 @@ export const addNewEmployee = joi
     firstName: joi.string().min(3).max(50).required(),
     lastName: joi.string().min(3).max(50).required(),
     email: joi.string().email().required(),
-
     department: joi
       .string()
       .valid(
@@ -171,6 +170,26 @@ export const deletePayrollSchema = joi
   .required();
 
 export const deleteSheetSchema = joi
+  .object({
+    id: joi.custom(isValidObjectId).required(),
+  })
+  .required();
+
+//Advances
+//update Advance status
+//update leave
+export const updateAdvanceSchema = joi
+  .object({
+    id: joi.custom(isValidObjectId).required(),
+    status: joi
+      .string()
+      .valid("pending", "approved", "rejected", "paid")
+      .required(),
+  })
+  .required();
+
+//delete Advance Schema
+export const deleteAdvanceSchema = joi
   .object({
     id: joi.custom(isValidObjectId).required(),
   })

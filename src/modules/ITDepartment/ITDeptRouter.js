@@ -2,8 +2,11 @@ import { Router } from "express";
 import * as ITDeptController from "./ITDeptController.js";
 import * as ITDeptSchema from "./ITDeptSchema.js";
 import { validation } from "../../middlewares/validationMiddleware.js";
-import { addLeaveSchema } from "../dashboard/dashboardSchema.js";
-import { addLeave } from "../dashboard/dashboardController.js";
+import {
+  addLeaveSchema,
+  requestAdvanceSchema,
+} from "../dashboard/dashboardSchema.js";
+import { addLeave, requestAdvance } from "../dashboard/dashboardController.js";
 import { fileUpload } from "../../utils/fileUpload.js";
 import {
   deleteLeaveSchema,
@@ -94,5 +97,8 @@ router.put("/leaves/:id", validation(updateLeaveSchema), updateLeaveStatus);
 
 //delete leave
 router.delete("/leaves/:id", validation(deleteLeaveSchema), deleteLeave);
+
+//request advance
+router.post("/advance", validation(requestAdvanceSchema), requestAdvance);
 
 export default router;

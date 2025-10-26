@@ -7,6 +7,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { Attendance } from "../../../DB/models/attendanceModel.js";
 import { cloudinary } from "../../utils/cloudinary.js";
 import { api_features } from "../../utils/api_features.utils.js";
+import { Advance } from "../../../DB/models/AdvanceModel.js";
 
 //Employees
 //add new employee
@@ -301,13 +302,39 @@ export const generatePayslip = asyncHandler(async (req, res, next) => {
       )
     );
   }
+  const dateObj = new Date(payDate);
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const monthName = monthNames[dateObj.getUTCMonth()];
+  // Fetch approved advance for this employee in this month
+  const advance = await Advance.findOne({
+    employee: employee._id,
+    payrollMonth: monthName,
+    status: "Approved",
+  });
+
+  const AdvanceAmount = advance ? advance.amount : 0;
+
   // calculate net pay directly here
   const netPay =
     baseSalary +
     overtimeHours * overtimeRate +
     bonuses +
     benefits -
-    (deductions + taxes);
+    (deductions + taxes + AdvanceAmount);
 
   // create payroll with calculated netPay
   const payslip = await Payroll.create({
@@ -319,6 +346,7 @@ export const generatePayslip = asyncHandler(async (req, res, next) => {
     deductions,
     benefits,
     taxes,
+    advance: AdvanceAmount,
     netPay, // 👈 directly set here
     payDate,
     status,
@@ -469,5 +497,36 @@ export const deleteSheet = asyncHandler(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     message: "Attendance sheet deleted successfully",
+  });
+});
+
+export const updateAdvanceStatus = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const updateAdvance = await Advance.findByIdAndUpdate(
+    id,
+    { status },
+    { new: true }
+  );
+  if (!updateAdvance) {
+    return next(new Error("No Advance with this id", { cause: 404 }));
+  }
+  return res.json({
+    success: true,
+    message: "Advance status updated successfully",
+    data: updateAdvance,
+  });
+});
+
+//delete Advance
+export const deleteAdvance = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const deleteAdvance = await Advance.findByIdAndDelete(id);
+  if (!deleteAdvance) {
+    return next(new Error("No Advance with this id", { cause: 404 }));
+  }
+  return res.status(200).json({
+    success: true,
+    message: "Advance deleted successfully",
   });
 });
