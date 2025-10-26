@@ -52,7 +52,7 @@ export const getAllEmployeesLeaves = asyncHandler(async (req, res, next) => {
   const leaves = await Leave.find({ employee: employeeId })
     .skip(skip)
     .limit(limit)
-    .sort({ createdAt: -1 })
+    .sort({ createdAt: -1, _id: -1 })
     .populate("employee", "firstName lastName email");
 
   if (!leaves || leaves.length === 0) {
@@ -73,9 +73,9 @@ export const getAllEmployeesTickets = asyncHandler(async (req, res, next) => {
   const employeeId = req.authEmployee._id;
 
   const tickets = await Ticket.find({ employee: employeeId })
+    .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
-    .sort({ createdAt: -1 })
     .populate("employee", "firstName lastName email");
   if (!tickets || tickets.length === 0) {
     return next(new Error("No tickets found", { cause: 404 }));
@@ -120,9 +120,9 @@ export const getEmployeesAdvances = asyncHandler(async (req, res, next) => {
   const employeeId = req.authEmployee._id;
 
   const Advances = await Advance.find({ employee: employeeId })
+    .sort({ createdAt: -1, _id: -1 })
     .skip(skip)
     .limit(limit)
-    .sort({ createdAt: -1 })
     .populate("employee", "firstName lastName email");
   if (!Advances || Advances.length === 0) {
     return next(new Error("No Advances found", { cause: 404 }));
