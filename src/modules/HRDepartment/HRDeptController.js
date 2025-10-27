@@ -323,7 +323,7 @@ export const generatePayslip = asyncHandler(async (req, res, next) => {
   const advance = await Advance.findOne({
     employee: employee._id,
     payrollMonth: monthName,
-    status: "Approved",
+    status: "approved",
   });
 
   const AdvanceAmount = advance ? advance.amount : 0;
