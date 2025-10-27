@@ -540,20 +540,28 @@ export const getAllAdvances = asyncHandler(async (req, res, next) => {
 
   // ✅ build dynamic filter
   const filter = {};
-  if (status) {
-    filter.status = status;
-  }
+  if (status) filter.status = status;
 
+  // ✅ get total count before pagination
+  const totalAdvances = await Advance.countDocuments(filter);
+
+  // ✅ fetch paginated data
   const Advances = await Advance.find(filter)
     .sort({ createdAt: -1, _id: -1 })
     .skip(skip)
     .limit(limit)
     .populate("employee", "firstName lastName email");
+
   if (!Advances || Advances.length === 0) {
     return next(new Error("No Advances found", { cause: 404 }));
   }
+
   return res.status(200).json({
     success: true,
     data: Advances,
+    page,
+    limit,
+    totalPages: Math.ceil(totalAdvances / limit),
+    totalAdvances,
   });
 });
