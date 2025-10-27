@@ -536,7 +536,15 @@ export const getAllAdvances = asyncHandler(async (req, res, next) => {
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
 
-  const Advances = await Advance.find()
+  const { status } = req.query; // ✅ read status from query params
+
+  // ✅ build dynamic filter
+  const filter = {};
+  if (status) {
+    filter.status = status;
+  }
+
+  const Advances = await Advance.find(filter)
     .sort({ createdAt: -1, _id: -1 })
     .skip(skip)
     .limit(limit)
