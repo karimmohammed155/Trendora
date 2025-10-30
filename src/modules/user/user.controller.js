@@ -1,7 +1,7 @@
 import { asyncHandler, Error_handler_class } from "../../utils/index.js";
-import { Employee} from "../../../DB/models/employeeModel.js";
+import { Employee } from "../../../DB/models/employeeModel.js";
 import bcrypt from "bcrypt";
-import { compareSync} from "bcrypt";
+import { compareSync } from "bcrypt";
 import randomstring from "randomstring";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../../utils/sendEmail.js";
@@ -15,6 +15,16 @@ export const log_in = async (req, res, next) => {
       new Error_handler_class("invalid credentials", 400, "login api")
     );
   }
+  if (is_user_exists.status === "inactive") {
+    return next(
+      new Error_handler_class(
+        "your account is inactive, please contact admin",
+        403,
+        "login api"
+      )
+    );
+  }
+
   const pass_check = compareSync(password, is_user_exists.password);
   if (!pass_check) {
     return next(
@@ -22,38 +32,35 @@ export const log_in = async (req, res, next) => {
     );
   }
   const token = jwt.sign(
-    { user_id: is_user_exists._id,role:is_user_exists.role },
+    { user_id: is_user_exists._id, role: is_user_exists.role },
     process.env.SIGNATURE,
     {
       expiresIn: "30d",
     }
   );
 
-  res
-    .status(200)
-    .json({ 
-      message: "user logged in successfully",
-      token: token,
-      user:{
-        is_user_exists
-      }
-     
-     });
+  res.status(200).json({
+    message: "user logged in successfully",
+    token: token,
+    user: {
+      is_user_exists,
+    },
+  });
 };
 // get profile api
 export const list_profile = async (req, res, next) => {
   const { _id } = req.authEmployee;
   const find_user = await Employee.findById(_id).select("-password");
-  
+
   if (!find_user) {
     next(new Error_handler_class("user not found", 404, "list profile api"));
   }
 
-  const department=await Department.findById(find_user.department);
+  const department = await Department.findById(find_user.department);
   res.status(200).json({
-    success:true,
+    success: true,
     find_user,
-    department:department.name
+    department: department.name,
   });
 };
 export const forgetPassword = asyncHandler(async (req, res, next) => {
@@ -63,7 +70,6 @@ export const forgetPassword = asyncHandler(async (req, res, next) => {
 
   if (!user) return next(new Error("User not found!", { cause: 404 }));
 
-  
   const forgetCode = randomstring.generate({
     length: 5,
     charset: "numeric",
@@ -106,19 +112,14 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
 
   if (!user) return next(new Error("User not found!", { cause: 404 }));
 
- 
   if (forgetCode !== user.forgetCode)
     return next(new Error("Invalid code!", { cause: 406 }));
 
   user.password = await bcrypt.hash(password, parseInt(process.env.SALT_ROUND));
   await user.save();
 
-
-
   return res.json({
     success: true,
     message: "Try to login now :)",
-    
   });
 });
-
