@@ -19,7 +19,7 @@ export const log_in = async (req, res, next) => {
     return next(
       new Error_handler_class(
         "your account is inactive, please contact admin",
-        400,
+        403,
         "login api"
       )
     );
