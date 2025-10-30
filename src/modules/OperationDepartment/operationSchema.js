@@ -20,7 +20,7 @@ export const addCampaignSchema = joi.object({
 export const updateCampaignSchema = joi.object({
   id: joi.custom(isValidObjectId).required(),
   name: joi.string().min(3).max(50).optional(),
-  customerName: joi.string().max(100).optional().allow(""),
+  customerName: joi.string().max(100).allow("").optional(),
   description: joi.string().allow("").max(500).optional(),
   startDate: joi.date().optional(),
   endDate: joi.date().greater(joi.ref("startDate")).optional(),
