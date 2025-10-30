@@ -26,7 +26,7 @@ export const createProjectSchema = joi
   .object({
     name: joi.string().min(3).max(100).required(),
     customerName: joi.string().max(100).optional(),
-    description: joi.string().max(500).optional(),
+    description: joi.string().max(500).optional().allow(""),
     status: joi
       .string()
       .valid("planned", "in_progress", "on_hold", "completed")
