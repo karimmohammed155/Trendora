@@ -10,7 +10,7 @@ export const addLeaveSchema = joi
       .valid("annual", "sick", "unpaid", "early", "emrgency")
       .required(),
     status: joi.string().valid("pending", "approved", "rejected"),
-    leave_hour: joi.number().min(0).optional(),
+    leave_hours: joi.number().min(0).optional(),
   })
   .required();
 
