@@ -1,12 +1,11 @@
 import joi from "joi";
-import { isValidObjectId } from "../../middlewares/validationMiddleware.js";
 
 //add leave
 export const addLeaveSchema = joi
   .object({
     startDate: joi.date().required(),
     endDate: joi.date().required(),
-    type: joi.string().valid("annual", "sick", "unpaid").required(),
+    type: joi.string().valid("annual", "sick", "unpaid", "early").required(),
     status: joi.string().valid("pending", "approved", "rejected"),
   })
   .required();
