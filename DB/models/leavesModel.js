@@ -7,7 +7,7 @@ const LeaveSchema = new Schema(
     endDate: Date,
     type: {
       type: String,
-      enum: ["annual", "sick", "unpaid", "early"],
+      enum: ["annual", "sick", "unpaid", "early", "emrgency"],
       required: true,
     },
     leave_hours: {

@@ -5,7 +5,10 @@ export const addLeaveSchema = joi
   .object({
     startDate: joi.date().required(),
     endDate: joi.date().required(),
-    type: joi.string().valid("annual", "sick", "unpaid", "early").required(),
+    type: joi
+      .string()
+      .valid("annual", "sick", "unpaid", "early", "emrgency")
+      .required(),
     status: joi.string().valid("pending", "approved", "rejected"),
     leave_hour: joi.number().min(0).optional(),
   })
