@@ -119,7 +119,7 @@ export const getEmployeesAdvances = asyncHandler(async (req, res, next) => {
   const skip = (page - 1) * limit;
   const employeeId = req.authEmployee._id;
 
-  const totalAdvances = await Advance.countDocuments(filter);
+  const totalAdvances = await Advance.countDocuments({ employee: employeeId });
 
   const Advances = await Advance.find({ employee: employeeId })
     .sort({ createdAt: -1, _id: -1 })
