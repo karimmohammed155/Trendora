@@ -12,6 +12,7 @@ import cors from "cors";
 import { global_response } from "./src/middlewares/error.handle.middleware.js";
 import { authorizeDepartment } from "./src/middlewares/authorizeDepartment.js";
 import { auth } from "./src/middlewares/auth_middleware.js";
+import sales_router from "./src/modules/salesDepartment/sales.route.js";
 
 dotenv.config();
 await connectDB();
@@ -44,6 +45,12 @@ app.use(
   auth(),
   authorizeDepartment("Accounting"),
   accounting_router
+);
+app.use(
+  "/api/sales",
+  auth(),
+  authorizeDepartment("Sales"),
+  sales_router
 );
 app.all("/{*any}", (req, res, next) => {
   return next(new Error("Page not found", { cause: 404 }));
