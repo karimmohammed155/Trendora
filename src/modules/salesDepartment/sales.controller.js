@@ -4,25 +4,20 @@ import { api_features } from "../../utils/api_features.utils.js";
 import { Error_handler_class } from "../../utils/error-class.utils.js";
 
 export const add_customer = async (req, res, next) => {
-  const {
-    customer_name,
-    company_name,
-    phone_number,
-    email,
-    services,
-    status,
-    Budget,
-    Next_Followup_Date,
-    notes,
-    assigned_to,
-  } = req.body;
   const new_customer = await customer.create({ ...req.body });
   res
     .status(201)
     .json({ message: "customer added successfully", Data: new_customer });
 };
 export const get_all_customers = async (req, res, next) => {
-  const all_customers = customer.find();
+  const { query } = req.query;
+  const all_customers = customer.find({
+    $or: [
+      { customer_name: { $regex: "query", $options: "i" } },
+      { company_name: { $regex: query, $options: "i" } },
+      { phone: { $regex: query, $options: "i" } },
+    ],
+  });
   const new_api_feature = new api_features(all_customers, req.query)
     .pagination()
     .sort();
@@ -46,8 +41,31 @@ export const get_one_customer = async (req, res, next) => {
     .status(200)
     .json({ message: "The customer that found", Data: one_customer });
 };
-// export const update_customer=async(req,res,next) =>{
-//     const{_id}=req.params
-    
-//     const u_customer
-// }
+export const update_customer = async (req, res, next) => {
+  const { _id } = req.params;
+  const upd_customer = await customer.findOneAndUpdate(
+    { _id: _id },
+    { ...req.body },
+    { new: true }
+  );
+  if (!upd_customer) {
+    next(
+      new Error_handler_class("customer not found", 404, "update customer api")
+    );
+  }
+  res
+    .status(200)
+    .json({ message: "Customer updated successfully", Data: upd_customer });
+};
+export const delete_customer = async (req, res, next) => {
+  const { _id } = req.params;
+  const del_customer = await customer.findByIdAndDelete(_id);
+  if (!del_customer) {
+    next(
+      new Error_handler_class("customer not found", 404, "delete customer api")
+    );
+  }
+  res
+    .status(200)
+    .json({ message: "Customer deleted successfully"});
+};
