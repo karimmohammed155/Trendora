@@ -41,15 +41,19 @@ export const update_customer_schema = joi.object({
   phone_number: joi.string().trim().optional(),
   email: joi.string().email().optional().allow("", null),
   services: joi
-    .string()
-    .valid(
-      "Influencer Marketing",
-      "Event Management",
-      "Social Media Management",
-      "Professional Photography",
-      "Lighting Services",
-      "Screens & Displays",
-      "Digital Advertising"
+    .array()
+    .items(
+      joi
+        .string()
+        .valid(
+          "Influencer Marketing",
+          "Event Management",
+          "Social Media Management",
+          "Professional Photography",
+          "Lighting Services",
+          "Screens & Displays",
+          "Digital Advertising"
+        )
     )
     .optional(),
   Budget: joi.number().optional(),
