@@ -10,6 +10,8 @@ import {
 } from "./sales.schema.js";
 const sales_router = Router();
 
+sales_router.get("/employees/salesDept", sales_controller.getSalesEmployees);
+
 sales_router.post(
   "/add",
   validation(add_customer_validation),

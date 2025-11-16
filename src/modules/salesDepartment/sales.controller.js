@@ -1,8 +1,31 @@
 import { customer } from "../../../DB/models/customer.model.js";
+import { Department } from "../../../DB/models/departmentModel.js";
 import { Employee } from "../../../DB/models/employeeModel.js";
 import { api_features } from "../../utils/api_features.utils.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { Error_handler_class } from "../../utils/error-class.utils.js";
+
+export const getSalesEmployees = asyncHandler(async (req, res, next) => {
+  const department = await Department.findOne({ name: "Sales" });
+  if (!department) {
+    return next(new Error("Sales Department not found", { cause: 404 }));
+  }
+
+  const employees = await Employee.find({ department: department._id }).select(
+    "firstName lastName "
+  );
+  if (employees.length === 0) {
+    return next(
+      new Error("No employees found in Sales department", { cause: 404 })
+    );
+  }
+  const totalEmployees = employees.length;
+  return res.status(200).json({
+    success: true,
+    data: employees,
+    totalEmployees,
+  });
+});
 
 export const add_customer = async (req, res, next) => {
   const new_customer = await customer.create({ ...req.body });
