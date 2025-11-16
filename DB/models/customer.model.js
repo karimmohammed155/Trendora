@@ -33,7 +33,7 @@ const customer_schema = new Schema(
       enum: ["New", "Contacted", "Proposal Sent", "Negotiating", "Won", "Lost"],
     },
     Budget: Number,
-    Next_Followup_Date: String,
+    Next_Followup_Date: Date,
     notes: String,
     assigned_to: {
       type: Schema.Types.ObjectId,
@@ -42,6 +42,10 @@ const customer_schema = new Schema(
   },
   { timestamps: true, versionKey: false }
 );
-
+customer_schema.index({
+  customer_name: "text",
+  company_name: "text",
+  phone_number: "text",
+});
 export const customer =
   mongoose.models.customer || model("customer", customer_schema);
