@@ -42,6 +42,10 @@ const customer_schema = new Schema(
   },
   { timestamps: true, versionKey: false }
 );
-
+customer_schema.index({
+  customer_name: "text",
+  company_name: "text",
+  phone_number: "text",
+});
 export const customer =
   mongoose.models.customer || model("customer", customer_schema);

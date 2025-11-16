@@ -5,25 +5,20 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { Error_handler_class } from "../../utils/error-class.utils.js";
 
 export const add_customer = async (req, res, next) => {
-  const {
-    customer_name,
-    company_name,
-    phone_number,
-    email,
-    services,
-    status,
-    Budget,
-    Next_Followup_Date,
-    notes,
-    assigned_to,
-  } = req.body;
   const new_customer = await customer.create({ ...req.body });
   res
     .status(201)
     .json({ message: "customer added successfully", Data: new_customer });
 };
 export const get_all_customers = async (req, res, next) => {
-  const all_customers = customer.find();
+  const { query } = req.query;
+  const all_customers = customer.find({
+    $or: [
+      { customer_name: { $regex: "query", $options: "i" } },
+      { company_name: { $regex: query, $options: "i" } },
+      { phone: { $regex: query, $options: "i" } },
+    ],
+  });
   const new_api_feature = new api_features(all_customers, req.query)
     .pagination()
     .sort();
@@ -47,13 +42,33 @@ export const get_one_customer = async (req, res, next) => {
     .status(200)
     .json({ message: "The customer that found", Data: one_customer });
 };
-// export const update_customer=async(req,res,next) =>{
-//     const{_id}=req.params
+export const update_customer = async (req, res, next) => {
+  const { _id } = req.params;
+  const upd_customer = await customer.findOneAndUpdate(
+    { _id: _id },
+    { ...req.body },
+    { new: true }
+  );
+  if (!upd_customer) {
+    next(
+      new Error_handler_class("customer not found", 404, "update customer api")
+    );
+  }
+  res
+    .status(200)
+    .json({ message: "Customer updated successfully", Data: upd_customer });
+};
+export const delete_customer = async (req, res, next) => {
+  const { _id } = req.params;
+  const del_customer = await customer.findByIdAndDelete(_id);
+  if (!del_customer) {
+    next(
+      new Error_handler_class("customer not found", 404, "delete customer api")
+    );
+  }
+  res.status(200).json({ message: "Customer deleted successfully" });
+};
 
-//     const u_customer
-// }
-
-// follow up customers
 export const getFollowUps = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -75,21 +90,22 @@ export const getFollowUps = asyncHandler(async (req, res) => {
   };
 
   if (type === "today") {
-    filter.followUpDate = { $gte: today, $lt: tomorrow };
+    filter.Next_Followup_Date = { $gte: today, $lt: tomorrow };
   }
 
   if (type === "overdue") {
-    filter.followUpDate = { $lt: today };
+    filter.Next_Followup_Date = { $lt: today };
   }
 
   if (type === "upcoming") {
-    filter.followUpDate = { $gte: tomorrow, $lte: next7 };
+    filter.Next_Followup_Date = { $gte: tomorrow, $lte: next7 };
   }
 
-  const results = await FollowUp.find(filter)
+  const results = await customer
+    .find(filter)
     .skip(skip)
     .limit(limit)
-    .sort({ followUpDate: 1 });
+    .sort({ Next_Followup_Date: 1 });
   return res.status(200).json({
     success: true,
     message: "Follow ups retrieved successfully",
@@ -107,7 +123,7 @@ export const updateFollowUpStatus = asyncHandler(async (req, res, next) => {
     { new: true }
   );
   if (!followUp) {
-    return next(new Error("Follow up not found", { cause: 404 }));
+    return next(new Error("customer not found", { cause: 404 }));
   }
 
   return res.status(200).json({
@@ -124,12 +140,12 @@ export const resecduleFollowUp = asyncHandler(async (req, res, next) => {
 
   const followUp = await customer.findByIdAndUpdate(
     id,
-    { followUpDate: newDate },
+    { Next_Followup_Date: newDate },
     { new: true }
   );
 
   if (!followUp) {
-    return next(new Error("Follow up not found", { cause: 404 }));
+    return next(new Error("customer not found", { cause: 404 }));
   }
 
   return res.status(200).json({
