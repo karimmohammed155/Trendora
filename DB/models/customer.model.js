@@ -33,7 +33,7 @@ const customer_schema = new Schema(
       enum: ["New", "Contacted", "Proposal Sent", "Negotiating", "Won", "Lost"],
     },
     Budget: Number,
-    Next_Followup_Date: String,
+    Next_Followup_Date: Date,
     notes: String,
     assigned_to: {
       type: Schema.Types.ObjectId,
