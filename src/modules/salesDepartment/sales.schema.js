@@ -57,3 +57,12 @@ export const update_customer_schema = joi.object({
   notes: joi.string().optional().allow("", null),
   assigned_to: joi.string().optional().allow("", null),
 });
+
+export const updateFollowUpStatus_schema = joi.object({
+  id: joi.string().custom(isValidObjectId).required(),
+});
+
+export const resecduleFollowUp_schema = joi.object({
+  id: joi.string().custom(isValidObjectId).required(),
+  newDate: joi.date().required(),
+});

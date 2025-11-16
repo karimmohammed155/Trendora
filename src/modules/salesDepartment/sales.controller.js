@@ -1,6 +1,7 @@
 import { customer } from "../../../DB/models/customer.model.js";
 import { Employee } from "../../../DB/models/employeeModel.js";
 import { api_features } from "../../utils/api_features.utils.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
 import { Error_handler_class } from "../../utils/error-class.utils.js";
 
 export const add_customer = async (req, res, next) => {
@@ -59,7 +60,91 @@ export const delete_customer = async (req, res, next) => {
       new Error_handler_class("customer not found", 404, "delete customer api")
     );
   }
-  res
-    .status(200)
-    .json({ message: "Customer deleted successfully"});
+  res.status(200).json({ message: "Customer deleted successfully" });
 };
+
+export const getFollowUps = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const { type } = req.query;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  const next7 = new Date(today);
+  next7.setDate(today.getDate() + 7);
+
+  let filter = {
+    status: { $nin: ["Contacted", "Won", "Lost"] }, // exclude these
+  };
+
+  if (type === "today") {
+    filter.Next_Followup_Date = { $gte: today, $lt: tomorrow };
+  }
+
+  if (type === "overdue") {
+    filter.Next_Followup_Date = { $lt: today };
+  }
+
+  if (type === "upcoming") {
+    filter.Next_Followup_Date = { $gte: tomorrow, $lte: next7 };
+  }
+
+  const results = await customer
+    .find(filter)
+    .skip(skip)
+    .limit(limit)
+    .sort({ Next_Followup_Date: 1 });
+  return res.status(200).json({
+    success: true,
+    message: "Follow ups retrieved successfully",
+    data: results,
+  });
+});
+
+//mark as done
+export const updateFollowUpStatus = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const followUp = await customer.findByIdAndUpdate(
+    id,
+    { status: "Contacted" },
+    { new: true }
+  );
+  if (!followUp) {
+    return next(new Error("customer not found", { cause: 404 }));
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Follow up marked as contacted",
+    data: followUp,
+  });
+});
+
+// resecdule follow up
+export const resecduleFollowUp = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { newDate } = req.body;
+
+  const followUp = await customer.findByIdAndUpdate(
+    id,
+    { Next_Followup_Date: newDate },
+    { new: true }
+  );
+
+  if (!followUp) {
+    return next(new Error("customer not found", { cause: 404 }));
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Follow up reschduled successfully",
+    data: followUp,
+  });
+});

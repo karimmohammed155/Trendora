@@ -5,6 +5,8 @@ import { validation } from "../../middlewares/validationMiddleware.js";
 import {
   add_customer_validation,
   update_customer_schema,
+  updateFollowUpStatus_schema,
+  resecduleFollowUp_schema,
 } from "./sales.schema.js";
 const sales_router = Router();
 
@@ -27,4 +29,19 @@ sales_router.delete(
   "/delete/:_id",
   error_handle(sales_controller.delete_customer)
 );
+
+sales_router.get("/followUps", sales_controller.getFollowUps);
+
+sales_router.patch(
+  "/updateFollowUpStatus/:id",
+  validation(updateFollowUpStatus_schema),
+  sales_controller.updateFollowUpStatus
+);
+
+sales_router.patch(
+  "/resecduleFollowUp/:id",
+  validation(resecduleFollowUp_schema),
+  sales_controller.resecduleFollowUp
+);
+
 export default sales_router;
