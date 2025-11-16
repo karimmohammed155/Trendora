@@ -10,8 +10,8 @@ export class api_features {
     return this;
   }
   search() {
-    if (this.query) {
-      const keyword = this.query.trim();
+    if (this.query.query) {
+      const keyword = this.query.query.trim();
 
       this.mongoose_query.find({
         $text: { $search: keyword },
@@ -32,9 +32,10 @@ export class api_features {
   //filters
   filters() {
     const { page = 1, limit = 2, sort, query, ...filters } = this.query;
-    if (filters.status) filters.status = filters.status;
-    if (filters.assigned_to) filters.assigned_to = filters.assigned_to;
-    this.mongoose_query.find(filters);
+    const filterQuery = {};
+    if (filters.status) filterQuery.status = filters.status;
+    if (filters.assigned_to) filterQuery.assigned_to = filters.assigned_to;
+    this.mongoose_query.find(filterQuery);
     return this;
   }
 

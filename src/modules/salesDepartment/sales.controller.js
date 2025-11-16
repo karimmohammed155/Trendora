@@ -37,9 +37,9 @@ export const get_all_customers = async (req, res, next) => {
   const all_customers = customer.find();
   const new_api_feature = new api_features(all_customers, req.query)
     .search()
-    .pagination()
+    .filters()
     .sort()
-    .filters();
+    .pagination()
   const find_customer = await new_api_feature.mongoose_query;
   if (!find_customer) {
     return next(
