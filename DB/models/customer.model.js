@@ -16,7 +16,7 @@ const customer_schema = new Schema(
       required: true,
     },
     email: String,
-    services: {
+    services: [{
       type: String,
       enum: [
         "Influencer Marketing",
@@ -27,7 +27,7 @@ const customer_schema = new Schema(
         "Screens & Displays",
         "Digital Advertising",
       ],
-    },
+    }],
     status: {
       type: String,
       enum: ["New", "Contacted", "Proposal Sent", "Negotiating", "Won", "Lost"],

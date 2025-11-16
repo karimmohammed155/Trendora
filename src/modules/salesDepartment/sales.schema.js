@@ -8,15 +8,19 @@ export const add_customer_validation = joi
     phone_number: joi.string().trim().required(),
     email: joi.string().email().optional().allow("", null),
     services: joi
-      .string()
-      .valid(
-        "Influencer Marketing",
-        "Event Management",
-        "Social Media Management",
-        "Professional Photography",
-        "Lighting Services",
-        "Screens & Displays",
-        "Digital Advertising"
+      .array()
+      .items(
+        joi
+          .string()
+          .valid(
+            "Influencer Marketing",
+            "Event Management",
+            "Social Media Management",
+            "Professional Photography",
+            "Lighting Services",
+            "Screens & Displays",
+            "Digital Advertising"
+          )
       )
       .default([]),
     Budget: joi.number().optional(),
