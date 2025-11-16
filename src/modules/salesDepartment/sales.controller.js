@@ -10,16 +10,10 @@ export const add_customer = async (req, res, next) => {
     .json({ message: "customer added successfully", Data: new_customer });
 };
 export const get_all_customers = async (req, res, next) => {
-  const { query } = req.query;
-  const all_customers = customer.find({
-    $or: [
-      { customer_name: { $regex: "query", $options: "i" } },
-      { company_name: { $regex: query, $options: "i" } },
-      { phone: { $regex: query, $options: "i" } },
-    ],
-  });
+  const all_customers = customer.find();
   const new_api_feature = new api_features(all_customers, req.query)
     .pagination()
+    .search()
     .sort();
   const find_customer = await new_api_feature.mongoose_query;
   if (!find_customer) {
