@@ -51,4 +51,5 @@ sales_router.get(
   "/team_performance",
   error_handle(sales_controller.team_performance)
 );
+sales_router.get("/demand", error_handle(sales_controller.services_demand));
 export default sales_router;

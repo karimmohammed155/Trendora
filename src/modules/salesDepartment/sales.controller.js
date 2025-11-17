@@ -184,13 +184,11 @@ export const team_performance = async (req, res, next) => {
     { $match: { status: "Won" } },
     { $group: { _id: "$assigned_to", total: { $sum: "$Budget" } } },
   ]);
-  res
-    .status(200)
-    .json({
-      customers_sales: customers_sales,
-      won_deals: won_deals,
-      won_budget: won_budget,
-    });
+  res.status(200).json({
+    customers_sales: customers_sales,
+    won_deals: won_deals,
+    won_budget: won_budget,
+  });
 };
 
 export const getMyCustomersReport = asyncHandler(async (req, res, next) => {
@@ -214,3 +212,10 @@ export const getMyCustomersReport = asyncHandler(async (req, res, next) => {
     data: results,
   });
 });
+export const services_demand = async (req, res, next) => {
+  const services = await customer.aggregate([
+    { $unwind: "$services" },
+    { $group: { _id: "$services", count: { $sum: 1 } } },
+  ]);
+  res.status(200).json({ services: services });
+};
