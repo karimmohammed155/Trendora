@@ -192,3 +192,25 @@ export const team_performance = async (req, res, next) => {
       won_budget: won_budget,
     });
 };
+
+export const getMyCustomersReport = asyncHandler(async (req, res, next) => {
+  const sales_resp = req.authEmployee._id;
+
+  const results = await customer.aggregate([
+    { $match: { assigned_to: sales_resp } },
+    {
+      $group: {
+        _id: "$status",
+        customers: { $push: "$$ROOT" },
+        count: { $sum: 1 },
+        totalBudget: { $sum: "$Budget" },
+      },
+    },
+  ]);
+
+  return res.status(200).json({
+    success: true,
+    message: "My customers report generated successfully",
+    data: results,
+  });
+});
