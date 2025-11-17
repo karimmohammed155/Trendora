@@ -9,16 +9,7 @@ export class api_features {
     this.mongoose_query.sort({ createdAt: -1 });
     return this;
   }
-  search() {
-    if (this.query.query) {
-      const keyword = this.query.query.trim();
 
-      this.mongoose_query.find({
-        $text: { $search: keyword },
-      });
-    }
-    return this;
-  }
   //pagination
   pagination() {
     const { page = 1, limit = 2 } = this.query;

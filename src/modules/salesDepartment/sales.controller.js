@@ -36,7 +36,6 @@ export const add_customer = async (req, res, next) => {
 export const get_all_customers = async (req, res, next) => {
   const all_customers = customer.find();
   const new_api_feature = new api_features(all_customers, req.query)
-    .search()
     .filters()
     .sort()
     .pagination();
