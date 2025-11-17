@@ -39,7 +39,7 @@ export const get_all_customers = async (req, res, next) => {
     .search()
     .filters()
     .sort()
-    .pagination()
+    .pagination();
   const find_customer = await new_api_feature.mongoose_query;
   if (!find_customer) {
     return next(
@@ -170,5 +170,27 @@ export const resecduleFollowUp = asyncHandler(async (req, res, next) => {
     success: true,
     message: "Follow up reschduled successfully",
     data: followUp,
+  });
+});
+
+export const getMyCustomersReport = asyncHandler(async (req, res, next) => {
+  const sales_resp = req.authEmployee._id;
+
+  const results = await customer.aggregate([
+    { $match: { assigned_to: sales_resp } },
+    {
+      $group: {
+        _id: "$status",
+        customers: { $push: "$$ROOT" },
+        count: { $sum: 1 },
+        totalBudget: { $sum: "$Budget" },
+      },
+    },
+  ]);
+
+  return res.status(200).json({
+    success: true,
+    message: "My customers report generated successfully",
+    data: results,
   });
 });

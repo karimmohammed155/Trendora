@@ -46,4 +46,6 @@ sales_router.patch(
   sales_controller.resecduleFollowUp
 );
 
+sales_router.get("/MyCustomers", sales_controller.getMyCustomersReport);
+
 export default sales_router;
