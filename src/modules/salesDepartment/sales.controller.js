@@ -39,7 +39,7 @@ export const get_all_customers = async (req, res, next) => {
     .search()
     .filters()
     .sort()
-    .pagination()
+    .pagination();
   const find_customer = await new_api_feature.mongoose_query;
   if (!find_customer) {
     return next(
@@ -172,3 +172,23 @@ export const resecduleFollowUp = asyncHandler(async (req, res, next) => {
     data: followUp,
   });
 });
+export const team_performance = async (req, res, next) => {
+  const customers_sales = await customer.aggregate([
+    { $group: { _id: "$assigned_to", count: { $sum: 1 } } },
+  ]);
+  const won_deals = await customer.aggregate([
+    { $match: { status: "Won" } },
+    { $group: { _id: "$assigned_to", won: { $sum: 1 } } },
+  ]);
+  const won_budget = await customer.aggregate([
+    { $match: { status: "Won" } },
+    { $group: { _id: "$assigned_to", total: { $sum: "$Budget" } } },
+  ]);
+  res
+    .status(200)
+    .json({
+      customers_sales: customers_sales,
+      won_deals: won_deals,
+      won_budget: won_budget,
+    });
+};

@@ -45,5 +45,8 @@ sales_router.patch(
   validation(resecduleFollowUp_schema),
   sales_controller.resecduleFollowUp
 );
-
+sales_router.get(
+  "/team_performance",
+  error_handle(sales_controller.team_performance)
+);
 export default sales_router;
