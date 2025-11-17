@@ -5,7 +5,7 @@ export const add_customer_validation = joi
   .object({
     customer_name: joi.string().trim().required(),
     company_name: joi.string().trim().required(),
-    phone_number: joi.string().trim().required(),
+    phone_number: joi.string().pattern(/^[0-9]{10,15}$/).trim().required(),
     email: joi.string().email().optional().allow("", null),
     services: joi
       .array()
@@ -22,7 +22,7 @@ export const add_customer_validation = joi
             "Digital Advertising"
           )
       )
-      .default([]),
+      .required(),
     Budget: joi.number().optional(),
     status: joi
       .string()
@@ -38,7 +38,7 @@ export const update_customer_schema = joi.object({
   _id: joi.custom(isValidObjectId).required(),
   customer_name: joi.string().trim().optional(),
   company_name: joi.string().trim().optional(),
-  phone_number: joi.string().trim().optional(),
+  phone_number: joi.string().pattern(/^[0-9]{10,15}$/).trim().optional(),
   email: joi.string().email().optional().allow("", null),
   services: joi
     .array()
